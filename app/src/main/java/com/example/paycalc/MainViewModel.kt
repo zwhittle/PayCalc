@@ -13,9 +13,11 @@ class MainViewModel : ViewModel() {
     /**
      * Election values
      */
+    // Frequency
+    var taxFrequency: String = Constants.Frequencies.BIWEEKLY
 
     // Federal Martial Status
-    var fedMaritalStatus: String = "Single"
+    var fedMaritalStatus: String = Constants.FederalMaritalStatuses.SINGLE
 
     // Federal Allowances
     var fedAllowances: Int = 0
@@ -24,7 +26,7 @@ class MainViewModel : ViewModel() {
     var fedAdditionalAmount: Float = 0f
 
     // State
-    var stateElectionState: String = "Illinois"
+    var stateElectionState: String = Constants.States.ILLINOIS
 
     // State Marital Status
     var stateMaritalStatus: String? = null

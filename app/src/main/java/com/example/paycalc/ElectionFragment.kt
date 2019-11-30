@@ -16,6 +16,7 @@ import com.example.paycalc.databinding.FragmentElectionBinding
 class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     private lateinit var binding: FragmentElectionBinding
+    private var selectedFrequency = ""
     private var selectedState = ""
     private var selectedFedStatus = ""
     private var selectStateStatus = ""
@@ -38,6 +39,7 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_election, container,false)
 
         subscribeUi()
+
         initializeSpinners()
 
         return binding.root
@@ -45,6 +47,7 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onResume() {
         // Reload the input data from the view model
+        selectedFrequency = viewModel.taxFrequency
         selectedState = viewModel.stateElectionState
         selectedFedStatus = viewModel.fedMaritalStatus
 
@@ -55,15 +58,18 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         binding.etFedAllowances.setText(viewModel.fedAllowances.toString())
         binding.etFedAddlAmount.setText(viewModel.fedAdditionalAmount.toString())
 
+        val frequencies = resources.getStringArray(R.array.frequencies)
+        val frequenciesPosition = frequencies.indexOf(selectedFrequency)
+
         val states = resources.getStringArray(R.array.states)
         val statesPosition = states.indexOf(selectedState)
 
         val fedStatuses = resources.getStringArray(R.array.fed_marital_statuses)
         val fedStatusesPosition = fedStatuses.indexOf(selectedFedStatus)
 
+        binding.spinnerFrequency.setSelection(frequenciesPosition)
         binding.spinnerFedMaritalStatus.setSelection(fedStatusesPosition)
         binding.spinnerState.setSelection(statesPosition)
-
 
         super.onResume()
     }
@@ -84,6 +90,9 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val fedAllowances = binding.etFedAllowances.text.toString().toInt()
         val fedAdditionalAmount = binding.etFedAddlAmount.text.toString().toFloat()
 
+        // Update Frequency
+        viewModel.taxFrequency = selectedFrequency
+
         // Update Federal Election data
         viewModel.fedMaritalStatus = selectedFedStatus
         viewModel.fedAllowances = fedAllowances
@@ -96,8 +105,19 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun initializeSpinners() {
+        initializeFrequencySpinner()
         initializeStateSpinner()
         initializeFedMaritalSpinner()
+    }
+
+    private fun initializeFrequencySpinner() {
+        val frequencySpinner = binding.spinnerFrequency
+
+        ArrayAdapter.createFromResource(binding.root.context, R.array.frequencies, android.R.layout.simple_spinner_item).also { adapter ->
+            frequencySpinner.adapter = adapter
+        }
+
+        frequencySpinner.onItemSelectedListener = this
     }
 
     private fun initializeFedMaritalSpinner() {
@@ -131,10 +151,18 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         when (parent?.id) {
+            R.id.spinner_frequency -> onFrequencySelected(position)
             R.id.spinner_state -> onStateSelected(position)
             R.id.spinner_fed_marital_status -> onFedMaritalSelected(position)
             R.id.spinner_state_marital_status -> onStateMaritalSelected(position)
         }
+    }
+
+    private fun onFrequencySelected(position: Int) {
+        val frequencies = resources.getStringArray(R.array.frequencies)
+        val frequency = frequencies[position]
+
+        selectedFrequency = frequency
     }
 
     private fun onStateSelected(position: Int) {

@@ -9,6 +9,25 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <!-- Frequency -->
+
+        <TextView
+            android:id="@+id/label_frequency"
+            android:text="@string/frequency"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/spinner_frequency"
+            android:gravity="end"
+            android:focusedByDefault="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_frequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
         <!-- Federal -->
         <TextView
             android:id="@+id/header_federal"
@@ -19,7 +38,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/spinner_frequency" />
 
         <!-- Federal Marital Status -->
 
@@ -36,6 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
+            android:focusedByDefault="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/label_fed_marital_status" />
 
@@ -59,6 +79,7 @@
             android:importantForAutofill="no"
             android:inputType="number"
             android:selectAllOnFocus="true"
+            android:focusedByDefault="false"
             android:text="@string/_0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spinner_fed_marital_status" />
@@ -83,6 +104,7 @@
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
             android:selectAllOnFocus="true"
+            android:focusedByDefault="false"
             android:text="@string/_0_00"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_fed_allowances" />
@@ -117,6 +139,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
             android:gravity="end"
+            android:focusedByDefault="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/label_state" />
 
@@ -136,6 +159,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="end"
+            android:focusedByDefault="false"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/label_state_marital_status" />

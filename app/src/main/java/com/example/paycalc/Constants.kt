@@ -69,7 +69,7 @@ object Constants {
         const val MONTHLY = "Monthly"
         const val QUARTERLY = "Quarterly"
         const val SEMIANNUALLY = "Semiannually"
-        const val ANNUALlY = "Annually"
+        const val ANNUALLY = "Annually"
     }
 
     object AllowanceAmounts {

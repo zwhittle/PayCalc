@@ -28,6 +28,17 @@
     <string name="elections">Elections</string>
     <string name="additional_amount">Additional Amount</string>
     <string name="net_pay">Net Pay</string>
+    <string name="frequency">Frequency</string>
+
+    <string-array name="frequencies">
+        <item>Biweekly</item>
+        <item>Semimonthly</item>
+        <item>Monthly</item>
+        <item>Quarterly</item>
+        <item>Semiannually</item>
+        <item>Annually</item>
+        <item>Daily</item>
+    </string-array>
 
     <string-array name="fed_marital_statuses">
         <item>Single</item>
