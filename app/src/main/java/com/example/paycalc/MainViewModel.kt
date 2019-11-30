@@ -290,19 +290,30 @@ class MainViewModel : ViewModel() {
 
     private fun calcStateTax(): Float {
         calcStateWages()
-        val wages = _stateWages.value
+        val wages = _stateWages.value ?: 0f
 
-        val state = "Illinois"
-
-        val rate = when (state) {
-            "Illinois" -> 0.0495f
-            else -> 0f
-        }
-
-        val tax = wages?.times(rate) ?: 0f
+        val tax = calcStateTaxFlat(wages, stateElectionState)
 
         _stateTax.value = tax
         return tax
+    }
+
+    private fun calcStateTaxFlat(wages: Float, state: String): Float {
+
+        val rate = when (state) {
+            Constants.States.COLORADO -> 0.0463f
+            Constants.States.ILLINOIS -> 0.0495f
+            Constants.States.INDIANA -> 0.0323f
+            Constants.States.KENTUCKY -> 0.05f
+            Constants.States.MASSACHUSETTS -> 0.0505f
+            Constants.States.MICHIGAN -> 0.0425f
+            Constants.States.NORTH_CAROLINA -> 0.0525f
+            Constants.States.PENNSYLVANIA -> 0.0307f
+            Constants.States.UTAH -> 0.0495f
+            else -> 0f
+        }
+
+        return wages * rate
     }
 
     private fun calcFederalTax(): Float {
