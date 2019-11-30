@@ -1,6 +1,6 @@
 package com.example.paycalc.taxes
 
-class OASDITax(grossWages: Float, deductions: Float): Tax(grossWages, deductions){
+class OASDI(grossWages: Float, deductions: Float): Tax(grossWages, deductions){
 
     override var hasFlatRate = true
     override var flatRate = 0.062f

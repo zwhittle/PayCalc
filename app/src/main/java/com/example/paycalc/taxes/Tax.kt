@@ -1,25 +1,25 @@
 package com.example.paycalc.taxes
 
-interface TaxInterface {
-    var amount: Float
-    var hasFlatRate: Boolean
-    var flatRate: Float
-    var hasWagesLimit: Boolean
-    var wagesLimit: Float
-    var hasAmountLimit: Boolean
-    var amountLimit: Float
-
-    fun calcWages()
-    fun calcAmount()
-    fun calcVariableAmount()
-    fun calcFlatRateAmount() : Float
-    fun amount() : Float
-}
+//interface TaxInterface {
+//    var amount: Float
+//    var hasFlatRate: Boolean
+//    var flatRate: Float
+//    var hasWagesLimit: Boolean
+//    var wagesLimit: Float
+//    var hasAmountLimit: Boolean
+//    var amountLimit: Float
+//
+//    fun calcWages()
+//    fun calcAmount()
+//    fun calcVariableAmount()
+//    fun calcFlatRateAmount() : Float
+//    fun amount() : Float
+//}
 
 abstract class Tax(private val grossWages: Float, private val deductions: Float) {
 
     private var subjectWages = 0f
-    private var taxableWages = 0f
+    var taxableWages = 0f
     open var amount = 0f
     open var hasFlatRate = false
     open var flatRate = 0f
@@ -50,7 +50,7 @@ abstract class Tax(private val grossWages: Float, private val deductions: Float)
         amount = if (hasFlatRate) {
             calcFlatRateAmount()
         } else {
-            calcFlatRateAmount()
+            calcVariableAmount()
         }
 
         if (hasAmountLimit && amount > amountLimit) {
@@ -58,8 +58,9 @@ abstract class Tax(private val grossWages: Float, private val deductions: Float)
         }
     }
 
-    open fun calcVariableAmount() {
+    open fun calcVariableAmount(): Float {
 
+        return 0f
     }
 
     private fun calcFlatRateAmount(): Float {

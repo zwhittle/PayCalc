@@ -3,9 +3,10 @@ package com.example.paycalc
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.paycalc.taxes.AdditionalMedicareTax
-import com.example.paycalc.taxes.MedicareTax
-import com.example.paycalc.taxes.OASDITax
+import com.example.paycalc.taxes.AdditionalMedicare
+import com.example.paycalc.taxes.Medicare
+import com.example.paycalc.taxes.OASDI
+import com.example.paycalc.taxes.StateWithholding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -264,7 +265,7 @@ class MainViewModel : ViewModel() {
     private fun calcOASDI(): Float {
         val gross = _grossWages.value ?: 0f
 
-        val tax = OASDITax(gross, preFICAWages).amount()
+        val tax = OASDI(gross, preFICAWages).amount()
 
         _oasdiTax.value = tax
         return tax
@@ -273,7 +274,7 @@ class MainViewModel : ViewModel() {
     private fun calcMedicare(): Float {
         val gross = _grossWages.value ?: 0f
 
-        val tax = MedicareTax(gross, preFICAWages).amount()
+        val tax = Medicare(gross, preFICAWages).amount()
 
         _medicareTax.value = tax
         return tax
@@ -282,7 +283,7 @@ class MainViewModel : ViewModel() {
     private fun calcAdditionalMedicare(): Float {
         val gross = _grossWages.value ?: 0f
 
-        val tax = AdditionalMedicareTax(gross, preFICAWages).amount()
+        val tax = AdditionalMedicare(gross, preFICAWages).amount()
 
         _additionalMedicareTax.value = tax
         return tax
@@ -292,7 +293,10 @@ class MainViewModel : ViewModel() {
         calcStateWages()
         val wages = _stateWages.value ?: 0f
 
-        val tax = calcStateTaxFlat(wages, stateElectionState)
+        val gross = _grossWages.value ?: 0f
+
+//        val tax = calcStateTaxFlat(wages, stateElectionState)
+        val tax = StateWithholding(stateElectionState, gross, preTaxWages).amount()
 
         _stateTax.value = tax
         return tax
