@@ -15,9 +15,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_xlarge"
-            app:layout_constraintEnd_toEndOf="parent"
             android:text="@string/federal_election"
             android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -46,9 +46,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/allowances"
+            app:layout_constraintBottom_toBottomOf="@id/et_fed_allowances"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/et_fed_allowances"
-            app:layout_constraintBottom_toBottomOf="@id/et_fed_allowances"/>
+            app:layout_constraintTop_toTopOf="@id/et_fed_allowances" />
 
         <EditText
             android:id="@+id/et_fed_allowances"
@@ -58,6 +58,7 @@
             android:hint="@string/_0"
             android:importantForAutofill="no"
             android:inputType="number"
+            android:selectAllOnFocus="true"
             android:text="@string/_0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spinner_fed_marital_status" />
@@ -69,9 +70,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/additional_amount"
+            app:layout_constraintBottom_toBottomOf="@id/et_fed_addl_amount"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/et_fed_addl_amount"
-            app:layout_constraintBottom_toBottomOf="@id/et_fed_addl_amount"/>
+            app:layout_constraintTop_toTopOf="@id/et_fed_addl_amount" />
 
         <EditText
             android:id="@+id/et_fed_addl_amount"
@@ -81,6 +82,7 @@
             android:hint="@string/_0_00"
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
             android:text="@string/_0_00"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_fed_allowances" />
@@ -94,8 +96,8 @@
             android:layout_margin="@dimen/margin_xlarge"
             android:text="@string/state_election"
             android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_fed_addl_amount" />
 
         <!-- State -->

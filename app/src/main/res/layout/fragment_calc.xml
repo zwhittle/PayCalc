@@ -28,6 +28,7 @@
             android:hint="@string/_1000_00"
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
             android:text="@string/_1000_00"
             app:layout_constraintBottom_toBottomOf="@id/reg_wages"
             app:layout_constraintEnd_toEndOf="parent"
@@ -53,6 +54,7 @@
             android:hint="@string/_1000_00"
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
             android:text="@string/_1000_00"
             app:layout_constraintBottom_toBottomOf="@id/supp_wages"
             app:layout_constraintEnd_toEndOf="parent"
@@ -100,6 +102,7 @@
             android:hint="@string/_1000_00"
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
             android:text="@string/_20_00"
             app:layout_constraintBottom_toBottomOf="@id/fica_reduction"
             app:layout_constraintEnd_toEndOf="parent"
@@ -125,6 +128,7 @@
             android:hint="@string/_420_00"
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
+            android:selectAllOnFocus="true"
             android:text="@string/_420_00"
             app:layout_constraintBottom_toBottomOf="@id/tax_reduction"
             app:layout_constraintEnd_toEndOf="parent"
@@ -243,6 +247,25 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/state_tax"
             tools:text="@string/_0_00" />
+
+        <!-- Net Pay -->
+        <TextView
+            android:id="@+id/label_net_pay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/net_pay"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/state_tax" />
+
+        <TextView
+            android:id="@+id/net_pay_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/_0_00"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/label_net_pay" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

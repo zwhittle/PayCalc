@@ -27,6 +27,7 @@
     <string name="save">Save</string>
     <string name="elections">Elections</string>
     <string name="additional_amount">Additional Amount</string>
+    <string name="net_pay">Net Pay</string>
 
     <string-array name="fed_marital_statuses">
         <item>Single</item>

@@ -111,6 +111,16 @@ class MainViewModel : ViewModel() {
     val stateTax: LiveData<Float>
         get() = _stateTax
 
+    // Total Tax
+    private val _totaltax = MutableLiveData<Float>()
+    val totalTax: LiveData<Float>
+        get() = _totaltax
+
+    // Net Pay
+    private val _netPay = MutableLiveData<Float>()
+    val netPay: LiveData<Float>
+        get() = _netPay
+
     // Create a Coroutine scope using a job to be able to cancel when needed
     private var viewModelJob = Job()
 
@@ -143,11 +153,8 @@ class MainViewModel : ViewModel() {
 
     fun calc() {
         calcTotalWages()
-        calcOASDI()
-        calcMedicare()
-        calcAdditionalMedicare()
-        calcFederalTax()
-        calcStateTax()
+        calcTaxes()
+        calcNetPay()
     }
 
     private fun calcTotalWages() {
@@ -161,7 +168,7 @@ class MainViewModel : ViewModel() {
         val twages = _totalWages.value
         val pfWages = preFICAWages
 
-        var ssaWages = twages?.minus(pfWages!!)
+        var ssaWages = twages?.minus(pfWages)
         if (ssaWages != null) {
             if (ssaWages > 132900f) {
                 ssaWages = 132900f
@@ -175,7 +182,7 @@ class MainViewModel : ViewModel() {
         val twages = _totalWages.value
         val pfWages = preFICAWages
 
-        val medWages = twages?.minus(pfWages!!)
+        val medWages = twages?.minus(pfWages)
 
         _medicareWages.value = medWages
     }
@@ -185,7 +192,7 @@ class MainViewModel : ViewModel() {
         val pfWages = preFICAWages
         val threshold = 200000f
 
-        val ficaWages = twages?.minus(pfWages!!)
+        val ficaWages = twages?.minus(pfWages)
         var addMedWages = ficaWages?.minus(threshold)
 
         if (addMedWages != null) {
@@ -202,10 +209,10 @@ class MainViewModel : ViewModel() {
         val regWages = regularWages
         val ptWages = preTaxWages
 
-        val pct = regWages?.div(twages!!)
-        val adjPreTaxWages = ptWages?.times(pct!!)
+        val pct = regWages.div(twages!!)
+        val adjPreTaxWages = ptWages.times(pct)
 
-        _federalRegularWages.value = regWages?.minus(adjPreTaxWages!!)
+        _federalRegularWages.value = regWages.minus(adjPreTaxWages)
     }
 
     private fun calcFedSuppWages() {
@@ -213,10 +220,10 @@ class MainViewModel : ViewModel() {
         val suppWages = supplementalWages
         val ptWages = preTaxWages
 
-        val pct = suppWages?.div(twages!!)
-        val adjPreTaxWages = ptWages?.times(pct!!)
+        val pct = suppWages.div(twages!!)
+        val adjPreTaxWages = ptWages.times(pct)
 
-        _federalSupplementalWages.value = suppWages?.minus(adjPreTaxWages!!)
+        _federalSupplementalWages.value = suppWages.minus(adjPreTaxWages)
     }
 
     private fun calcFederalWages() {
@@ -228,28 +235,61 @@ class MainViewModel : ViewModel() {
         val twages = _totalWages.value
         val ptWages = preTaxWages
 
-        _stateWages.value = twages?.minus(ptWages!!)
+        _stateWages.value = twages?.minus(ptWages)
     }
 
-    private fun calcOASDI() {
+    private fun calcTaxes() {
+        var total = 0f
+
+        val oasdi = calcOASDI()
+        total += oasdi
+
+        val medicare = calcMedicare()
+        total += medicare
+
+        val addlMedicare = calcAdditionalMedicare()
+        total += addlMedicare
+
+        val federal = calcFederalTax()
+        total += federal
+
+        val state = calcStateTax()
+        total += state
+
+        _totaltax.value = total
+    }
+
+    private fun calcOASDI(): Float {
         calcOASDIWages()
         val wages = _oasdiWages.value
-        _oasdiTax.value = wages?.times(0.062f)
+
+        val tax = wages?.times(0.062f)  ?: 0f
+
+        _oasdiTax.value = tax
+        return tax
     }
 
-    private fun calcMedicare() {
+    private fun calcMedicare(): Float {
         calcMedicareWages()
         val wages = _medicareWages.value
-        _medicareTax.value = wages?.times(0.0145f)
+
+        val tax = wages?.times(0.0145f) ?: 0f
+
+        _medicareTax.value = tax
+        return tax
     }
 
-    private fun calcAdditionalMedicare() {
+    private fun calcAdditionalMedicare(): Float {
         calcAdditionalMedicareWages()
         val wages = _additionalMedicareWages.value
-        _additionalMedicareTax.value = wages?.times(0.009f)
+
+        val tax = wages?.times(0.009f) ?: 0f
+
+        _additionalMedicareTax.value = tax
+        return tax
     }
 
-    private fun calcStateTax() {
+    private fun calcStateTax(): Float {
         calcStateWages()
         val wages = _stateWages.value
 
@@ -260,16 +300,19 @@ class MainViewModel : ViewModel() {
             else -> 0f
         }
 
-        _stateTax.value = wages?.times(rate)
+        val tax = wages?.times(rate) ?: 0f
+
+        _stateTax.value = tax
+        return tax
     }
 
-    private fun calcFederalTax() {
+    private fun calcFederalTax(): Float {
         calcFederalWages()
 
         val regWages = _federalRegularWages.value
         val suppWages = _federalSupplementalWages.value
 
-        val suppTax = suppWages?.times(0.22f)
+        val suppTax = suppWages?.times(0.22f) ?: 0f
 
         val regTax: Float = when {
             regWages!! <= 146f -> 0f
@@ -282,10 +325,20 @@ class MainViewModel : ViewModel() {
             else -> 5915.35f + ((regWages - 19773f) * 0.37f)
         }
 
-        _federalTax.value = regTax + suppTax!!
+        val tax = regTax + suppTax
+
+        _federalTax.value = tax
+        return tax
     }
 
-    fun swapFragments(intent: Intent) {
+    private fun calcNetPay(): Float {
+        val gross = _totalWages.value ?: 0f
+        val deductions = preTaxWages
+        val taxes = _totaltax.value ?: 0f
 
+        val net = (gross.minus(deductions)).minus(taxes)
+
+        _netPay.value = net
+        return net
     }
 }

@@ -101,6 +101,10 @@ class CalcFragment : Fragment() {
         viewModel.stateTax.observe(this, Observer {
             binding.stateValue.text = it.toString()
         })
+
+        viewModel.netPay.observe(this, Observer {
+            binding.netPayValue.text = it.toString()
+        })
     }
 
 }
