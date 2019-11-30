@@ -1,6 +1,5 @@
 package com.example.paycalc
 
-import android.content.Intent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -309,26 +308,62 @@ class MainViewModel : ViewModel() {
     private fun calcFederalTax(): Float {
         calcFederalWages()
 
-        val regWages = _federalRegularWages.value
-        val suppWages = _federalSupplementalWages.value
+        val regWages = _federalRegularWages.value ?: 0f
+        val suppWages = _federalSupplementalWages.value ?: 0f
 
-        val suppTax = suppWages?.times(0.22f) ?: 0f
+        val suppTax = suppWages.times(0.22f)
 
-        val regTax: Float = when {
-            regWages!! <= 146f -> 0f
-            regWages <= 519f -> (regWages - 146f) * 0.1f
-            regWages <= 1664f -> 37.30f + ((regWages - 519f) * 0.12f)
-            regWages <= 3385f -> 174.70f + ((regWages - 1664f) * 0.22f)
-            regWages <= 6328f -> 553.32f + ((regWages - 3385f) * 0.24f)
-            regWages <= 7996f -> 1259.64f + ((regWages - 6328f) * 0.32f)
-            regWages <= 19773 -> 1793.40f + ((regWages - 7996f) * 0.35f)
-            else -> 5915.35f + ((regWages - 19773f) * 0.37f)
-        }
+        val regTax = calcFederalRegularTax(regWages)
 
-        val tax = regTax + suppTax
+        val additionalAmount = fedAdditionalAmount
+
+        val tax = regTax + suppTax + additionalAmount
 
         _federalTax.value = tax
         return tax
+    }
+
+    private fun calcFederalRegularTax(wages: Float): Float {
+
+        return when (fedMaritalStatus) {
+            Constants.FederalMaritalStatuses.SINGLE -> fedRegTaxBWSingle(wages)
+            Constants.FederalMaritalStatuses.MARRIED -> fedRegTaxBWMarried(wages)
+            Constants.FederalMaritalStatuses.MARRIED_SINGLE -> fedRegTaxBWSingle(wages)
+            else -> 0f
+        }
+    }
+    
+    private fun fedRegTaxBWSingle(wages: Float): Float {
+        val allowanceReduction = fedAllowances * 161.50f
+        val adjWages = wages - allowanceReduction
+
+
+        return when {
+            adjWages <= 146f -> 0f
+            adjWages <= 519f -> (adjWages - 146f) * 0.1f
+            adjWages <= 1664f -> 37.30f + ((adjWages - 519f) * 0.12f)
+            adjWages <= 3385f -> 174.70f + ((adjWages - 1664f) * 0.22f)
+            adjWages <= 6328f -> 553.32f + ((adjWages - 3385f) * 0.24f)
+            adjWages <= 7996f -> 1259.64f + ((adjWages - 6328f) * 0.32f)
+            adjWages <= 19773f -> 1793.40f + ((adjWages - 7996f) * 0.35f)
+            else -> 5915.35f + ((adjWages - 19773f) * 0.37f)
+        }
+    }
+
+    private fun fedRegTaxBWMarried(wages: Float): Float {
+        val allowanceReduction = fedAllowances * 161.50f
+        val adjWages = wages - allowanceReduction
+        
+        return when {
+            adjWages <= 454f -> 0f
+            adjWages <= 1200f -> (adjWages - 454f) * 0.1f
+            adjWages <= 3490f -> 74.60f + ((adjWages - 1200f) * 0.12f)
+            adjWages <= 6931f -> 349.40f + ((adjWages - 3490f) * 0.22f)
+            adjWages <= 12817f -> 1106.42f + ((adjWages - 6931f) * 0.24f)
+            adjWages <= 16154f -> 2519.06f + ((adjWages - 12817f) * 0.32f)
+            adjWages <= 24006f -> 3586.90f + ((adjWages - 16154f) * 0.35f)
+            else -> 6335.10f + ((adjWages - 24006f) * 0.37f)
+        }
     }
 
     private fun calcNetPay(): Float {

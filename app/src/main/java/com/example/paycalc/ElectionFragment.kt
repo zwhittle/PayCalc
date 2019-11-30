@@ -80,6 +80,7 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
     }
 
     private fun actionSave(): Boolean {
+
         val fedAllowances = binding.etFedAllowances.text.toString().toInt()
         val fedAdditionalAmount = binding.etFedAddlAmount.text.toString().toFloat()
 

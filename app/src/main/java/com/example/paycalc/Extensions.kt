@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import kotlin.math.round
 
 /**
  * Fragment extensions
@@ -26,4 +27,12 @@ fun AppCompatActivity.replaceFragment(fragment: Fragment, frameId: Int, tag: Str
 fun AppCompatActivity.removeFragment(fragment: Fragment) {
     supportFragmentManager.inTransaction { remove(fragment) }
     Log.d(applicationContext.packageCodePath, "$fragment removed from supportFragmentManager")
+}
+
+
+
+fun Double.round(decimals: Int): Double {
+    var multiplier = 1.0
+    repeat(decimals) { multiplier *= 10 }
+    return round(this * multiplier) / multiplier
 }
