@@ -78,7 +78,7 @@ class CalcFragment : Fragment() {
     }
 
     private fun subscribeUi() {
-        viewModel.totalWages.observe(this, Observer {
+        viewModel.grossWages.observe(this, Observer {
             binding.totalWagesValue.text = it.toString()
         })
 

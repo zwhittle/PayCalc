@@ -3,6 +3,9 @@ package com.example.paycalc
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.example.paycalc.taxes.AdditionalMedicareTax
+import com.example.paycalc.taxes.MedicareTax
+import com.example.paycalc.taxes.OASDITax
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -45,9 +48,9 @@ class MainViewModel : ViewModel() {
     var supplementalWages: Float
 
     // Total Wages
-    private val _totalWages = MutableLiveData<Float>()
-    val totalWages: LiveData<Float>
-        get() = _totalWages
+    private val _grossWages = MutableLiveData<Float>()
+    val grossWages: LiveData<Float>
+        get() = _grossWages
 
     // Pre-FICA Wages
     var preFICAWages: Float
@@ -160,11 +163,11 @@ class MainViewModel : ViewModel() {
         val regWages = regularWages
         val suppWages = supplementalWages
 
-        _totalWages.value = regWages + suppWages
+        _grossWages.value = regWages + suppWages
     }
 
     private fun calcOASDIWages() {
-        val twages = _totalWages.value
+        val twages = _grossWages.value
         val pfWages = preFICAWages
 
         var ssaWages = twages?.minus(pfWages)
@@ -178,7 +181,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcMedicareWages() {
-        val twages = _totalWages.value
+        val twages = _grossWages.value
         val pfWages = preFICAWages
 
         val medWages = twages?.minus(pfWages)
@@ -187,7 +190,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcAdditionalMedicareWages() {
-        val twages = _totalWages.value
+        val twages = _grossWages.value
         val pfWages = preFICAWages
         val threshold = 200000f
 
@@ -204,7 +207,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcFedRegWages() {
-        val twages = _totalWages.value
+        val twages = _grossWages.value
         val regWages = regularWages
         val ptWages = preTaxWages
 
@@ -215,7 +218,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcFedSuppWages() {
-        val twages = _totalWages.value
+        val twages = _grossWages.value
         val suppWages = supplementalWages
         val ptWages = preTaxWages
 
@@ -231,7 +234,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcStateWages() {
-        val twages = _totalWages.value
+        val twages = _grossWages.value
         val ptWages = preTaxWages
 
         _stateWages.value = twages?.minus(ptWages)
@@ -259,30 +262,27 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcOASDI(): Float {
-        calcOASDIWages()
-        val wages = _oasdiWages.value
+        val gross = _grossWages.value ?: 0f
 
-        val tax = wages?.times(0.062f)  ?: 0f
+        val tax = OASDITax(gross, preFICAWages).amount()
 
         _oasdiTax.value = tax
         return tax
     }
 
     private fun calcMedicare(): Float {
-        calcMedicareWages()
-        val wages = _medicareWages.value
+        val gross = _grossWages.value ?: 0f
 
-        val tax = wages?.times(0.0145f) ?: 0f
+        val tax = MedicareTax(gross, preFICAWages).amount()
 
         _medicareTax.value = tax
         return tax
     }
 
     private fun calcAdditionalMedicare(): Float {
-        calcAdditionalMedicareWages()
-        val wages = _additionalMedicareWages.value
+        val gross = _grossWages.value ?: 0f
 
-        val tax = wages?.times(0.009f) ?: 0f
+        val tax = AdditionalMedicareTax(gross, preFICAWages).amount()
 
         _additionalMedicareTax.value = tax
         return tax
@@ -378,7 +378,7 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcNetPay(): Float {
-        val gross = _totalWages.value ?: 0f
+        val gross = _grossWages.value ?: 0f
         val deductions = preTaxWages
         val taxes = _totaltax.value ?: 0f
 
