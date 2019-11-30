@@ -1,7 +1,9 @@
 package com.example.paycalc.taxes
 
+import android.util.Log
+
 //interface TaxInterface {
-//    var amount: Float
+//    var result: Float
 //    var hasFlatRate: Boolean
 //    var flatRate: Float
 //    var hasWagesLimit: Boolean
@@ -11,15 +13,20 @@ package com.example.paycalc.taxes
 //
 //    fun calcWages()
 //    fun calcAmount()
-//    fun calcVariableAmount()
+//    fun calcRegularAmount()
 //    fun calcFlatRateAmount() : Float
-//    fun amount() : Float
+//    fun result() : Float
 //}
 
-abstract class Tax(private val grossWages: Float, private val deductions: Float) {
+abstract class Tax(private val regWages: Float, private val supWages: Float, private val deductions: Float) {
 
+    private var grossWages = 0f
     private var subjectWages = 0f
+    var regularTaxableWages = 0f
+    var supplementalTaxableWages = 0f
     var taxableWages = 0f
+    open var hasSupplementalTax = false
+    open var supplementalRate = 0f
     open var amount = 0f
     open var hasFlatRate = false
     open var flatRate = 0f
@@ -30,7 +37,10 @@ abstract class Tax(private val grossWages: Float, private val deductions: Float)
     open var hasAmountLimit = false
     open var amountLimit = 0f
 
+    private val LOG_TAG: String = this.javaClass.simpleName
+
     private fun calcWages() {
+        grossWages = regWages + supWages
         subjectWages = grossWages - deductions
 
         if (hasWagesFloor && subjectWages < wagesFloor) {
@@ -42,24 +52,43 @@ abstract class Tax(private val grossWages: Float, private val deductions: Float)
         } else {
             subjectWages
         }
+
+        regularTaxableWages = taxableWages * (regWages / grossWages)
+        supplementalTaxableWages = taxableWages * (supWages / grossWages)
+
+
+        Log.d(LOG_TAG, "gross: $grossWages")
+        Log.d(LOG_TAG, "subject: $subjectWages")
+        Log.d(LOG_TAG, "taxable: $taxableWages")
+        Log.d(LOG_TAG, "regTaxable: $regularTaxableWages")
+        Log.d(LOG_TAG, "supTaxable: $supplementalTaxableWages")
     }
 
     private fun calcAmount() {
         calcWages()
 
-        amount = if (hasFlatRate) {
+        var tax = if (hasFlatRate) {
             calcFlatRateAmount()
         } else {
-            calcVariableAmount()
+            calcRegularAmount()
         }
 
-        if (hasAmountLimit && amount > amountLimit) {
-            amount = amountLimit
+        if (hasSupplementalTax) {
+            tax += calcSupplementalAmount()
+        }
+
+        amount = if (hasAmountLimit && tax > amountLimit) {
+            amountLimit
+        } else  {
+            tax
         }
     }
 
-    open fun calcVariableAmount(): Float {
+    open fun calcRegularAmount(): Float {
+        return 0f
+    }
 
+    open fun calcSupplementalAmount(): Float {
         return 0f
     }
 
@@ -67,7 +96,7 @@ abstract class Tax(private val grossWages: Float, private val deductions: Float)
         return taxableWages * flatRate
     }
 
-    fun amount(): Float {
+    fun result(): Float {
         calcAmount()
         return amount
     }

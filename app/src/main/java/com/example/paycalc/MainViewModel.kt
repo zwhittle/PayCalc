@@ -3,10 +3,7 @@ package com.example.paycalc
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.paycalc.taxes.AdditionalMedicare
-import com.example.paycalc.taxes.Medicare
-import com.example.paycalc.taxes.OASDI
-import com.example.paycalc.taxes.StateWithholding
+import com.example.paycalc.taxes.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -128,7 +125,7 @@ class MainViewModel : ViewModel() {
     private var viewModelJob = Job()
 
     // the Coroutine runs using the Main (UI) dispatcher
-    private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main )
+    private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
     init {
         // initialize calculation values
@@ -263,27 +260,21 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcOASDI(): Float {
-        val gross = _grossWages.value ?: 0f
-
-        val tax = OASDI(gross, preFICAWages).amount()
+        val tax = OASDI(regularWages, supplementalWages, preFICAWages).result()
 
         _oasdiTax.value = tax
         return tax
     }
 
     private fun calcMedicare(): Float {
-        val gross = _grossWages.value ?: 0f
-
-        val tax = Medicare(gross, preFICAWages).amount()
+        val tax = Medicare(regularWages, supplementalWages, preFICAWages).result()
 
         _medicareTax.value = tax
         return tax
     }
 
     private fun calcAdditionalMedicare(): Float {
-        val gross = _grossWages.value ?: 0f
-
-        val tax = AdditionalMedicare(gross, preFICAWages).amount()
+        val tax = AdditionalMedicare(regularWages, supplementalWages, preFICAWages).result()
 
         _additionalMedicareTax.value = tax
         return tax
@@ -296,7 +287,12 @@ class MainViewModel : ViewModel() {
         val gross = _grossWages.value ?: 0f
 
 //        val tax = calcStateTaxFlat(wages, stateElectionState)
-        val tax = StateWithholding(stateElectionState, gross, preTaxWages).amount()
+        val tax = StateWithholding(
+            stateElectionState,
+            regularWages,
+            supplementalWages,
+            preTaxWages
+        ).result()
 
         _stateTax.value = tax
         return tax
@@ -332,7 +328,15 @@ class MainViewModel : ViewModel() {
 
         val additionalAmount = fedAdditionalAmount
 
-        val tax = regTax + suppTax + additionalAmount
+//        val tax = regTax + suppTax + additionalAmount
+        val tax = FederalWithholding(
+            maritalStatus = fedMaritalStatus,
+            allowances = fedAllowances,
+            addlAmount = fedAdditionalAmount,
+            regWages = regularWages,
+            supWages = supplementalWages,
+            deductions = preTaxWages
+        ).result()
 
         _federalTax.value = tax
         return tax
@@ -347,7 +351,7 @@ class MainViewModel : ViewModel() {
             else -> 0f
         }
     }
-    
+
     private fun fedRegTaxBWSingle(wages: Float): Float {
         val allowanceReduction = fedAllowances * 161.50f
         val adjWages = wages - allowanceReduction
@@ -368,7 +372,7 @@ class MainViewModel : ViewModel() {
     private fun fedRegTaxBWMarried(wages: Float): Float {
         val allowanceReduction = fedAllowances * 161.50f
         val adjWages = wages - allowanceReduction
-        
+
         return when {
             adjWages <= 454f -> 0f
             adjWages <= 1200f -> (adjWages - 454f) * 0.1f

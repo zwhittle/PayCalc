@@ -60,4 +60,26 @@ object Constants {
         const val MARRIED = "Married"
         const val MARRIED_SINGLE = "Married, but withhold at higher Single rate"
     }
+
+    object Frequencies {
+        const val DAILY = "Daily"
+        const val WEEKLY = "Weekly"
+        const val BIWEEKLY = "Biweekly"
+        const val SEMIMONTHLY = "Semimonthly"
+        const val MONTHLY = "Monthly"
+        const val QUARTERLY = "Quarterly"
+        const val SEMIANNUALLY = "Semiannually"
+        const val ANNUALlY = "Annually"
+    }
+
+    object AllowanceAmounts {
+        const val DAILY = 16.20f
+        const val WEEKLY = 80.80f
+        const val BIWEEKLY = 161.50f
+        const val SEMIMONTHLY = 175f
+        const val MONTHLY = 350f
+        const val QUARTERLY = 10500f
+        const val SEMIANNUALLY = 2100f
+        const val ANNUAL = 42000f
+    }
 }

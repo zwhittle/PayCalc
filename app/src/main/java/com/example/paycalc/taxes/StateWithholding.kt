@@ -2,12 +2,12 @@ package com.example.paycalc.taxes
 
 import com.example.paycalc.Constants
 
-class StateWithholding(private val state: String, grossWages: Float, deductions: Float) :
-    Tax(grossWages, deductions) {
+class StateWithholding(private val state: String, regWages: Float, supWages: Float, deductions: Float) :
+    Tax(regWages, supWages, deductions) {
 
-    override fun calcVariableAmount(): Float {
+    override fun calcRegularAmount(): Float {
         return if (stateHasFlatRate()) {
-            taxableWages * rateForState()
+            regularTaxableWages * rateForState()
         } else {
             0f
         }
