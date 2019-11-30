@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.paycalc.MainActivity">
+
+    <item
+        android:id="@+id/action_calc"
+        android:orderInCategory="100"
+        android:title="@string/calc"
+        app:showAsAction="ifRoom" />
+
+    <item
+        android:id="@+id/action_election"
+        android:orderInCategory="200"
+        android:title="@string/elections"
+        app:showAsAction="ifRoom"/>
+</menu>

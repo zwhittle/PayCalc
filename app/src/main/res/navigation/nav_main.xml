@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/calcFragment">
+    <fragment
+        android:id="@+id/electionFragment"
+        android:name="com.example.paycalc.ElectionFragment"
+        android:label="ElectionFragment" >
+        <action
+            android:id="@+id/action_electionFragment_to_calcFragment"
+            app:destination="@id/calcFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/calcFragment"
+        android:name="com.example.paycalc.CalcFragment"
+        android:label="CalcFragment" >
+        <action
+            android:id="@+id/action_calcFragment_to_electionFragment"
+            app:destination="@id/electionFragment" />
+    </fragment>
+</navigation>

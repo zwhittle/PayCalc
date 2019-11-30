@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Regular Wages -->
+
+        <TextView
+            android:id="@+id/reg_wages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/regular_wages"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/et_rwage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="end"
+            android:hint="@string/_1000_00"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:text="@string/_1000_00"
+            app:layout_constraintBottom_toBottomOf="@id/reg_wages"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/reg_wages" />
+
+        <!-- Supplemental Wages -->
+
+        <TextView
+            android:id="@+id/supp_wages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/supplemental_wages"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/reg_wages" />
+
+        <EditText
+            android:id="@+id/et_swage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="end"
+            android:hint="@string/_1000_00"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:text="@string/_1000_00"
+            app:layout_constraintBottom_toBottomOf="@id/supp_wages"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/supp_wages" />
+
+        <!-- Total Wages -->
+
+        <TextView
+            android:id="@+id/total_wages"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="@string/total_wages"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/supp_wages" />
+
+        <TextView
+            android:id="@+id/total_wages_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/_0_00"
+            app:layout_constraintBottom_toBottomOf="@id/total_wages"
+            app:layout_constraintEnd_toEndOf="@id/et_swage"
+            app:layout_constraintTop_toTopOf="@id/total_wages"
+            tools:text="@string/_0_00" />
+
+        <!-- Pre-FICA Wages -->
+
+        <TextView
+            android:id="@+id/fica_reduction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/pre_fica_wages"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/total_wages" />
+
+        <EditText
+            android:id="@+id/et_pfica_wage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="end"
+            android:hint="@string/_1000_00"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:text="@string/_20_00"
+            app:layout_constraintBottom_toBottomOf="@id/fica_reduction"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/fica_reduction" />
+
+        <!-- Pre-Tax Wages -->
+
+        <TextView
+            android:id="@+id/tax_reduction"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/pre_tax_wages"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/fica_reduction" />
+
+        <EditText
+            android:id="@+id/et_ptax_wage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:gravity="end"
+            android:hint="@string/_420_00"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:text="@string/_420_00"
+            app:layout_constraintBottom_toBottomOf="@id/tax_reduction"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/tax_reduction" />
+
+        <!-- Taxes -->
+        <!-- OASDI -->
+
+        <TextView
+            android:id="@+id/oasdi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="@string/oasdi"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tax_reduction" />
+
+        <TextView
+            android:id="@+id/oasdi_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:importantForAutofill="no"
+            android:text="@string/_0_00"
+            app:layout_constraintBottom_toBottomOf="@id/oasdi"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/oasdi"
+            tools:text="@string/_0_00" />
+
+        <!-- Medicare -->
+
+        <TextView
+            android:id="@+id/medicare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/medicare"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/oasdi" />
+
+        <TextView
+            android:id="@+id/medicare_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/_0_00"
+            app:layout_constraintBottom_toBottomOf="@id/medicare"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/medicare"
+            tools:text="@string/_0_00" />
+
+        <!-- Additional Medicare -->
+
+        <TextView
+            android:id="@+id/additional_medicare"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/additional_medicare"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/medicare" />
+
+        <TextView
+            android:id="@+id/additional_medicare_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/_0_00"
+            app:layout_constraintBottom_toBottomOf="@+id/additional_medicare"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/additional_medicare"
+            tools:text="@string/_0_00" />
+
+        <!-- Federal -->
+
+        <TextView
+            android:id="@+id/federal_tax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/federal_tax"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/additional_medicare" />
+
+        <TextView
+            android:id="@+id/federal_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:importantForAutofill="no"
+            android:text="@string/_0_00"
+            app:layout_constraintBottom_toBottomOf="@id/federal_tax"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/federal_tax"
+            tools:text="@string/_0_00" />
+
+        <!-- State -->
+
+        <TextView
+            android:id="@+id/state_tax"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="@string/state_tax"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/federal_tax" />
+
+        <TextView
+            android:id="@+id/state_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:importantForAutofill="no"
+            android:text="@string/_0_00"
+            app:layout_constraintBottom_toBottomOf="@id/state_tax"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/state_tax"
+            tools:text="@string/_0_00" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

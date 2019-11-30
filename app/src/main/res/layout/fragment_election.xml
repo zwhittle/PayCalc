@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- Federal -->
+        <TextView
+            android:id="@+id/header_federal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_xlarge"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:text="@string/federal_election"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Federal Marital Status -->
+
+        <TextView
+            android:id="@+id/label_fed_marital_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/marital_status"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_federal" />
+
+        <Spinner
+            android:id="@+id/spinner_fed_marital_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_fed_marital_status" />
+
+        <!-- Federal Allowances -->
+
+        <TextView
+            android:id="@+id/label_fed_allowances"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/allowances"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/et_fed_allowances"
+            app:layout_constraintBottom_toBottomOf="@id/et_fed_allowances"/>
+
+        <EditText
+            android:id="@+id/et_fed_allowances"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:hint="@string/_0"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:text="@string/_0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinner_fed_marital_status" />
+
+        <!-- Federal Additional Amount -->
+
+        <TextView
+            android:id="@+id/label_fed_addl_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/additional_amount"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/et_fed_addl_amount"
+            app:layout_constraintBottom_toBottomOf="@id/et_fed_addl_amount"/>
+
+        <EditText
+            android:id="@+id/et_fed_addl_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:hint="@string/_0_00"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            android:text="@string/_0_00"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_fed_allowances" />
+
+        <!-- State -->
+
+        <TextView
+            android:id="@+id/header_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_xlarge"
+            android:text="@string/state_election"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_fed_addl_amount" />
+
+        <!-- State -->
+
+        <TextView
+            android:id="@+id/label_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:text="@string/state"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header_state" />
+
+        <Spinner
+            android:id="@+id/spinner_state"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/label_state" />
+
+        <!-- State Marital Status -->
+
+        <TextView
+            android:id="@+id/label_state_marital_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/marital_status"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/header_state" />
+
+        <Spinner
+            android:id="@+id/spinner_state_marital_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/label_state_marital_status" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
