@@ -8,7 +8,7 @@ import com.example.paycalc.taxes.Tax
  * State Withholding
  * This class basically only being used to calculate flat rate states right now
  */
-open class StateWithholding(private val state: String, private val frequency: String, regWages: Float, supWages: Float, deductions: Float) :
+open class StateWithholding(private val state: String, regWages: Float, supWages: Float, deductions: Float) :
     Tax(regWages, supWages, deductions) {
 
     override fun calcRegularAmount(): Float {

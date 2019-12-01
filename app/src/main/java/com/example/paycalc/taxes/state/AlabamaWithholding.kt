@@ -21,57 +21,49 @@ class AlabamaWithholding(
     private val dependents: Int
 ) {
 
-    // Create fileds for amount, gross, and periodsPerYear for use when needed
-    private var amount = 0f
-    private var gross = 0f
+    // Create fields for amount, annualGross, and periodsPerYear for use when needed
+    private var annualGross = 0f
     private var periodsPerYear = 0
 
     // Log tag
     private val logTag: String = this.javaClass.simpleName
 
-    // Calculate and store the # of pay periods in a year and the gross wages for later use
+    // Calculate and store the # of pay periods in a year and the annualGross wages for later use
     init {
         Log.d(logTag, "frequency: $frequency")
         periodsPerYear = Utils.periodsPerYear(frequency)
 
-        gross = grossWages()
-    }
-
-    // Top-level function to calculate the final tax amount
-    private fun calc() {
-        amount = computeTax() / periodsPerYear
-
-        Log.d(logTag, "amount: $amount")
-    }
-
-    // Calculate the gross taxable wages by starting with gross wages and subtracting the reductions
-    private fun grossTaxableWages(): Float {
-        val totalReductions = standardDeduction() + federalAmount() + personalExemption() + dependentsReduction()
-
-        Log.d(logTag, "totalReductions: $totalReductions")
-
-        val grossTaxableWages = gross - totalReductions
-
-        Log.d(logTag, "grossTaxableWages: $grossTaxableWages")
-        return grossTaxableWages
+        annualGross = annualGrossWages()
     }
 
     // Calculate the taxable wages for the current period
-    private fun taxableWages(): Float {
+    private fun currentTaxableWages(): Float {
         val taxableWages = regWages + supWages - deductions
 
-        Log.d(logTag, "taxableWages: $taxableWages")
+        Log.d(logTag, "currentTaxableWages: $taxableWages")
 
         return taxableWages
     }
 
     // Convert the current period taxable wages to an annual amount
-    private fun grossWages(): Float {
-        val grossWages = taxableWages() * periodsPerYear
+    private fun annualGrossWages(): Float {
+        val annualGrossWages = currentTaxableWages() * periodsPerYear
 
-        Log.d(logTag, "grossWages: $grossWages")
+        Log.d(logTag, "annualGrossWages: $annualGrossWages")
 
-        return grossWages
+        return annualGrossWages
+    }
+
+    // Calculate the annual gross taxable wages by starting with annualGross wages and subtracting the reductions
+    private fun netTaxableIncome(): Float {
+        val totalReductions = standardDeduction() + federalAmount() + personalExemption() + dependentsReduction()
+
+        Log.d(logTag, "totalReductions: $totalReductions")
+
+        val netTaxableIncome = annualGross - totalReductions
+
+        Log.d(logTag, "netTaxableIncome: $netTaxableIncome")
+        return netTaxableIncome
     }
 
     // Calculate the appropriate standard deduction based on Exemption
@@ -99,9 +91,9 @@ class AlabamaWithholding(
 
     private fun stdDedZeroSingle(): Float {
         val stdDedZeroSingle =  when {
-            gross <= StdDedZeroSingle.UPPER_ONE -> StdDedZeroSingle.MAX_DEDUCTION
-            gross < StdDedZeroSingle.UPPER_TWO -> {
-                val excess = gross - StdDedZeroSingle.UPPER_TWO
+            annualGross <= StdDedZeroSingle.UPPER_ONE -> StdDedZeroSingle.MAX_DEDUCTION
+            annualGross < StdDedZeroSingle.UPPER_TWO -> {
+                val excess = annualGross - StdDedZeroSingle.UPPER_TWO
                 val increments = excess / StdDedZeroSingle.INCREMENT_STEP
                 val reduction = increments * StdDedZeroSingle.INCREMENT_VALUE
                 return StdDedZeroSingle.MAX_DEDUCTION - reduction
@@ -116,9 +108,9 @@ class AlabamaWithholding(
 
     private fun stdDedMS(): Float {
         val stdDedMS = when {
-            gross <= StdDedMS.UPPER_ONE -> StdDedMS.MAX_DEDUCTION
-            gross < StdDedMS.UPPER_TWO -> {
-                val excess = gross - StdDedMS.UPPER_TWO
+            annualGross <= StdDedMS.UPPER_ONE -> StdDedMS.MAX_DEDUCTION
+            annualGross < StdDedMS.UPPER_TWO -> {
+                val excess = annualGross - StdDedMS.UPPER_TWO
                 val increments = excess / StdDedMS.INCREMENT_STEP
                 val reduction = increments * StdDedMS.INCREMENT_VALUE
                 return StdDedMS.MAX_DEDUCTION - reduction
@@ -133,9 +125,9 @@ class AlabamaWithholding(
 
     private fun stdDedM(): Float {
         val stdDedM = when {
-            gross <= StdDedM.UPPER_ONE -> StdDedM.MAX_DEDUCTION
-            gross < StdDedM.UPPER_TWO -> {
-                val excess = gross - StdDedM.UPPER_TWO
+            annualGross <= StdDedM.UPPER_ONE -> StdDedM.MAX_DEDUCTION
+            annualGross < StdDedM.UPPER_TWO -> {
+                val excess = annualGross - StdDedM.UPPER_TWO
                 val increments = excess / StdDedM.INCREMENT_STEP
                 val reduction = increments * StdDedM.INCREMENT_VALUE
                 return StdDedM.MAX_DEDUCTION - reduction
@@ -150,9 +142,9 @@ class AlabamaWithholding(
 
     private fun stdDedH(): Float {
         val stdDedH = when {
-            gross <= StdDedH.UPPER_ONE -> StdDedH.MAX_DEDUCTION
-            gross < StdDedH.UPPER_TWO -> {
-                val excess = gross - StdDedH.UPPER_TWO
+            annualGross <= StdDedH.UPPER_ONE -> StdDedH.MAX_DEDUCTION
+            annualGross < StdDedH.UPPER_TWO -> {
+                val excess = annualGross - StdDedH.UPPER_TWO
                 val increments = excess / StdDedH.INCREMENT_STEP
                 val reduction = increments * StdDedH.INCREMENT_VALUE
                 return StdDedH.MAX_DEDUCTION - reduction
@@ -193,8 +185,8 @@ class AlabamaWithholding(
     // Calculate the dependents reduction amount
     private fun dependentsReduction(): Float {
         val dependentsReduction = when {
-            gross <= 20000f -> dependents * 1000f
-            gross <= 100000f -> dependents * 500f
+            annualGross <= 20000f -> dependents * 1000f
+            annualGross <= 100000f -> dependents * 500f
             else -> dependents * 300f
         }
 
@@ -204,7 +196,7 @@ class AlabamaWithholding(
     }
 
     // Compute the annual tax amount
-    private fun computeTax(): Float {
+    private fun annualGrossTax(): Float {
         // Use the appropriate child function based on Exemption
         val tax = if (exemption == Constants.AlabamaExemptions.MARRIED_FILING_JOINTLY) {
             computeTaxM()
@@ -218,7 +210,7 @@ class AlabamaWithholding(
     }
 
     private fun computeTaxZSOMS(): Float {
-        var remainingWages = grossTaxableWages()
+        var remainingWages = netTaxableIncome()
         var tax1 = 0f
         var tax2 = 0f
         var tax3 = 0f
@@ -249,7 +241,7 @@ class AlabamaWithholding(
     }
 
     private fun computeTaxM(): Float {
-        var remainingWages = grossTaxableWages()
+        var remainingWages = netTaxableIncome()
         var tax1 = 0f
         var tax2 = 0f
 
@@ -282,8 +274,11 @@ class AlabamaWithholding(
 
     // Call this function to run all the calculations and return the final amount
     fun result(): Float {
-        calc()
-        return amount
+        val finalTax = annualGrossTax() / periodsPerYear
+
+        Log.d(logTag, "finalTax: $finalTax")
+
+        return finalTax
     }
 
 }

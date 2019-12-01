@@ -35,19 +35,18 @@ class ArkansasWithholding(
         annualGross = annualGrossTaxableWages()
     }
 
-    // Calculate the current period taxable wages by starting with the passed raw wage values and
-    // reducing by pre-tax deductions
-    private fun taxableWages(): Float {
+    // Calculate the taxable wages for the current period
+    private fun currentTaxableWages(): Float {
         val taxableWages = regWages + supWages - deductions
 
-        Log.d(logTag, "taxableWages: $taxableWages")
+        Log.d(logTag, "currentTaxableWages: $taxableWages")
 
         return taxableWages
     }
 
     // Convert the current period taxable wages to an annual amount
     private fun annualGrossTaxableWages(): Float {
-        val grossWages = taxableWages() * periodsPerYear
+        val grossWages = currentTaxableWages() * periodsPerYear
 
         Log.d(logTag, "annualGrossTaxableWages: $grossWages")
 
