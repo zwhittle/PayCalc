@@ -11,7 +11,7 @@ object Utils {
             Constants.Frequencies.QUARTERLY -> 4
             Constants.Frequencies.SEMIANNUALLY -> 2
             Constants.Frequencies.ANNUALLY -> 1
-            Constants.Frequencies.DAILY -> 365
+            Constants.Frequencies.DAILY -> 260
             else -> 0
         }
     }

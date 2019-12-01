@@ -143,6 +143,33 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/label_state" />
 
+        <!-- Dependents (Alabama, Arkansas) -->
+
+        <TextView
+            android:id="@+id/label_dependents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:text="@string/dependents"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinner_state" />
+
+        <EditText
+            android:id="@+id/et_dependents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusedByDefault="false"
+            android:gravity="end"
+            android:hint="@string/_0"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:selectAllOnFocus="true"
+            android:text="@string/_0"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/label_dependents" />
+
         <!-- Alabama -->
 
         <!-- Alabama Exemption -->
@@ -155,7 +182,7 @@
             android:text="@string/exemption"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spinner_state" />
+            app:layout_constraintTop_toBottomOf="@id/et_dependents" />
 
         <Spinner
             android:id="@+id/spinner_alabama_exemption"
@@ -167,33 +194,6 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/label_alabama_exemption" />
-
-        <!-- Alabama Dependents -->
-
-        <TextView
-            android:id="@+id/label_alabama_dependents"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_small"
-            android:text="@string/dependents"
-            android:visibility="gone"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/spinner_alabama_exemption" />
-
-        <EditText
-            android:id="@+id/et_alabama_dependents"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:focusedByDefault="false"
-            android:gravity="end"
-            android:hint="@string/_0"
-            android:importantForAutofill="no"
-            android:inputType="number"
-            android:selectAllOnFocus="true"
-            android:text="@string/_0"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/label_alabama_dependents" />
 
         <!-- Arizona -->
 
@@ -207,7 +207,7 @@
             android:text="@string/constant_percentage"
             android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/et_alabama_dependents" />
+            app:layout_constraintTop_toBottomOf="@id/et_dependents" />
 
         <Spinner
             android:id="@+id/spinner_arizona_percentage"

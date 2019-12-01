@@ -43,7 +43,7 @@ class CalcFragment : Fragment() {
         binding.etRwage.setText(viewModel.regularWages.toString())
         binding.etSwage.setText(viewModel.supplementalWages.toString())
         binding.etPficaWage.setText(viewModel.preFICAWages.toString())
-        binding.etPtaxWage.setText(viewModel.preTaxWages.toString())
+        binding.etPtaxWage.setText(viewModel.preTaxDeductions.toString())
 
         super.onResume()
     }
@@ -70,7 +70,7 @@ class CalcFragment : Fragment() {
         viewModel.regularWages = regularWages
         viewModel.supplementalWages = supplementalWages
         viewModel.preFICAWages = preFICAWages
-        viewModel.preTaxWages = preTaxWages
+        viewModel.preTaxDeductions = preTaxWages
 
         viewModel.calc()
 

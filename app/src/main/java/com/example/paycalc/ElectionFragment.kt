@@ -1,7 +1,6 @@
 package com.example.paycalc
 
 
-import android.opengl.Visibility
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -68,14 +67,14 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val fedStatusesPosition = fedStatuses.indexOf(selectedFedStatus)
         binding.spinnerFedMaritalStatus.setSelection(fedStatusesPosition)
 
+        // Dependents
+        binding.etDependents.setText(viewModel.dependents.toString())
+
         // Alabama Exemption
         selectedAlabamaExemption = viewModel.alabamaExemption
         val alabamaExemptions = resources.getStringArray(R.array.alabama_exemptions)
         val alabamaExemptionsPosition = alabamaExemptions.indexOf(selectedAlabamaExemption)
         binding.spinnerAlabamaExemption.setSelection(alabamaExemptionsPosition)
-
-        // Alabama Dependents
-        binding.etAlabamaDependents.setText(viewModel.alabamaDependents.toString())
 
         // Arizona ConstantRate
         selectedArizonaPercentage = viewModel.arizonaConstantRate
@@ -113,9 +112,11 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         // Update State Election data
         viewModel.stateElectionState = selectedState
 
+        // Dependents
+        val dependents = binding.etDependents.text.toString().toInt()
+        viewModel.dependents = dependents
+
         // Alabama
-        val alabamaDependents = binding.etAlabamaDependents.text.toString().toInt()
-        viewModel.alabamaDependents = alabamaDependents
         viewModel.alabamaExemption = selectedAlabamaExemption
 
         // Arizona
@@ -207,14 +208,14 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
             binding.labelAlabamaExemption.visibility = View.VISIBLE
             binding.spinnerAlabamaExemption.visibility = View.VISIBLE
 
-            binding.labelAlabamaDependents.visibility = View.VISIBLE
-            binding.etAlabamaDependents.visibility = View.VISIBLE
+            binding.labelDependents.visibility = View.VISIBLE
+            binding.etDependents.visibility = View.VISIBLE
         } else {
             binding.labelAlabamaExemption.visibility = View.GONE
             binding.spinnerAlabamaExemption.visibility = View.GONE
 
-            binding.labelAlabamaDependents.visibility = View.GONE
-            binding.etAlabamaDependents.visibility = View.GONE
+            binding.labelDependents.visibility = View.GONE
+            binding.etDependents.visibility = View.GONE
         }
 
         if (state == Constants.States.ARIZONA) {
@@ -223,6 +224,14 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         } else {
             binding.labelArizonaPercent.visibility = View.GONE
             binding.spinnerArizonaPercentage.visibility = View.GONE
+        }
+
+        if (state == Constants.States.ARKANSAS) {
+            binding.labelDependents.visibility = View.VISIBLE
+            binding.etDependents.visibility = View.VISIBLE
+        } else {
+            binding.labelDependents.visibility = View.GONE
+            binding.labelDependents.visibility = View.GONE
         }
 
         selectedState = state

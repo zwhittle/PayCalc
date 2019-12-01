@@ -9,6 +9,7 @@ import com.example.paycalc.taxes.federal.Medicare
 import com.example.paycalc.taxes.federal.OASDI
 import com.example.paycalc.taxes.state.AlabamaWithholding
 import com.example.paycalc.taxes.state.ArizonaWithholding
+import com.example.paycalc.taxes.state.ArkansasWithholding
 import com.example.paycalc.taxes.state.StateWithholding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -43,14 +44,15 @@ class MainViewModel : ViewModel() {
     // State Additional Amount
     var stateAdditionalAmount: Float = 0f
 
-    // Alabama Exemptions
-    var alabamaExemption: String = Constants.AlabamaExemptions.MARRIED_FILING_JOINTLY
+    // Dependents (Alabama, Arkansas)
+    var dependents: Int = 0
 
-    // Alabama Dependents
-    var alabamaDependents: Int = 2
+    // Alabama Exemptions
+    var alabamaExemption: String = Constants.AlabamaExemptions.ZERO
 
     // Arizona Constant Rate
     var arizonaConstantRate: String = Constants.ArizonaConstantRates.TWO_POINT_SEVEN
+
 
     /**
      * Calculation Values
@@ -71,7 +73,7 @@ class MainViewModel : ViewModel() {
     var preFICAWages: Float = 0f
 
     // Pre-Tax Wages
-    var preTaxWages: Float = 0f
+    var preTaxDeductions: Float = 0f
 
     // OASDI Wages
     private val _oasdiWages = MutableLiveData<Float>()
@@ -159,7 +161,7 @@ class MainViewModel : ViewModel() {
 
     private fun calcStateWages() {
         val twages = _grossWages.value
-        val ptWages = preTaxWages
+        val ptWages = preTaxDeductions
 
         _stateWages.value = twages?.minus(ptWages)
     }
@@ -224,23 +226,30 @@ class MainViewModel : ViewModel() {
                 frequency = taxFrequency,
                 regWages = regularWages,
                 supWages = supplementalWages,
-                deductions = preTaxWages,
+                deductions = preTaxDeductions,
                 exemption = alabamaExemption,
                 fedAmount = _federalTax.value ?: 0f,
-                dependents = alabamaDependents
+                dependents = dependents
             ).result()
             Constants.States.ARIZONA -> ArizonaWithholding(
                 percentage = arizonaConstantRate,
                 regWages = regularWages,
                 supWages = supplementalWages,
-                deductions = preTaxWages
+                deductions = preTaxDeductions
+            ).result()
+            Constants.States.ARKANSAS -> ArkansasWithholding(
+                frequency = taxFrequency,
+                exemptions = dependents,
+                regWages = regularWages,
+                supWages = supplementalWages,
+                deductions = preTaxDeductions
             ).result()
             else -> StateWithholding(
                 state = stateElectionState,
                 frequency = taxFrequency,
                 regWages = regularWages,
                 supWages = supplementalWages,
-                deductions = preTaxWages
+                deductions = preTaxDeductions
             ).result()
         }
 
@@ -256,7 +265,7 @@ class MainViewModel : ViewModel() {
             addlAmount = fedAdditionalAmount,
             regWages = regularWages,
             supWages = supplementalWages,
-            deductions = preTaxWages
+            deductions = preTaxDeductions
         ).result()
 
         _federalTax.value = tax
@@ -265,7 +274,7 @@ class MainViewModel : ViewModel() {
 
     private fun calcNetPay(): Float {
         val gross = _grossWages.value ?: 0f
-        val deductions = preTaxWages
+        val deductions = preTaxDeductions
         val taxes = _totaltax.value ?: 0f
 
         val net = (gross.minus(deductions)).minus(taxes)
