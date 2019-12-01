@@ -98,4 +98,16 @@ object Constants {
         const val MARRIED_FILING_JOINTLY = "Married Filing Jointly (MJ)"
         const val HEAD_OF_FAMILY = "Head of Family (H)"
     }
+
+    // Arizona
+
+    object ArizonaConstantRates {
+        const val ZERO_POINT_EIGHT = "0.8%"
+        const val ONE_POINT_THREE = "1.3%"
+        const val ONE_POINT_EIGHT = "1.8%"
+        const val TWO_POINT_SEVEN = "2.7%"
+        const val THREE_POINT_SIX = "3.6%"
+        const val FOUR_POINT_TWO = "4.2%"
+        const val FIVE_POINT_ONE = "5.1%"
+    }
 }

@@ -21,6 +21,7 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var selectedState = ""
     private var selectedFedStatus = ""
     private var selectedAlabamaExemption = ""
+    private var selectedArizonaPercentage = ""
 
     private val viewModel: MainViewModel by lazy {
         ViewModelProviders.of(this.activity!!).get(MainViewModel::class.java)
@@ -67,15 +68,20 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val fedStatusesPosition = fedStatuses.indexOf(selectedFedStatus)
         binding.spinnerFedMaritalStatus.setSelection(fedStatusesPosition)
 
-        // Alabama
-        if (!viewModel.alabamaExemption.isEmpty()) {
-            selectedAlabamaExemption = viewModel.alabamaExemption.toString()
-        }
-
+        // Alabama Exemption
+        selectedAlabamaExemption = viewModel.alabamaExemption
         val alabamaExemptions = resources.getStringArray(R.array.alabama_exemptions)
         val alabamaExemptionsPosition = alabamaExemptions.indexOf(selectedAlabamaExemption)
-        binding.etAlabamaDependents.setText(viewModel.alabamaDependents.toString())
         binding.spinnerAlabamaExemption.setSelection(alabamaExemptionsPosition)
+
+        // Alabama Dependents
+        binding.etAlabamaDependents.setText(viewModel.alabamaDependents.toString())
+
+        // Arizona ConstantRate
+        selectedArizonaPercentage = viewModel.arizonaConstantRate
+        val arizonaPercentages = resources.getStringArray(R.array.arizona_percentages)
+        val arizonaPercentagesPosition = arizonaPercentages.indexOf(selectedArizonaPercentage)
+        binding.spinnerArizonaPercentage.setSelection(arizonaPercentagesPosition)
 
         super.onResume()
     }
@@ -112,6 +118,9 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         viewModel.alabamaDependents = alabamaDependents
         viewModel.alabamaExemption = selectedAlabamaExemption
 
+        // Arizona
+        viewModel.arizonaConstantRate = selectedArizonaPercentage
+
         return true
     }
 
@@ -120,6 +129,7 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         initializeStateSpinner()
         initializeFedMaritalSpinner()
         initializeAlabamaExemptionSpinner()
+        initializeArizonaConstantPercentageSpinner()
     }
 
     private fun initializeFrequencySpinner() {
@@ -161,12 +171,24 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         alabamaExemptionSpinner.onItemSelectedListener = this
     }
 
+    private fun initializeArizonaConstantPercentageSpinner() {
+        val arizonaPercentageSpinner = binding.spinnerArizonaPercentage
+
+        ArrayAdapter.createFromResource(binding.root.context, R.array.arizona_percentages, android.R.layout.simple_spinner_item).also { adapter ->
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            arizonaPercentageSpinner.adapter = adapter
+        }
+
+        arizonaPercentageSpinner.onItemSelectedListener = this
+    }
+
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
         when (parent?.id) {
             R.id.spinner_frequency -> onFrequencySelected(position)
             R.id.spinner_state -> onStateSelected(position)
             R.id.spinner_fed_marital_status -> onFedMaritalSelected(position)
             R.id.spinner_alabama_exemption -> onAlabamaExemptionSelected(position)
+            R.id.spinner_arizona_percentage -> onArizonaPercentageSpinnerSelected(position)
         }
     }
 
@@ -195,6 +217,14 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
             binding.etAlabamaDependents.visibility = View.GONE
         }
 
+        if (state == Constants.States.ARIZONA) {
+            binding.labelArizonaPercent.visibility = View.VISIBLE
+            binding.spinnerArizonaPercentage.visibility = View.VISIBLE
+        } else {
+            binding.labelArizonaPercent.visibility = View.GONE
+            binding.spinnerArizonaPercentage.visibility = View.GONE
+        }
+
         selectedState = state
     }
 
@@ -210,6 +240,13 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val exemption = exemptions[position]
 
         selectedAlabamaExemption = exemption
+    }
+
+    private fun onArizonaPercentageSpinnerSelected(position: Int) {
+        val percentages = resources.getStringArray(R.array.arizona_percentages)
+        val percentage = percentages[position]
+
+        selectedArizonaPercentage = percentage
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {

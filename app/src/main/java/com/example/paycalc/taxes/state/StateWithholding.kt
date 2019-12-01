@@ -19,10 +19,6 @@ open class StateWithholding(private val state: String, private val frequency: St
         return 0f
     }
 
-    private fun calcAlabamaStandardDeduction(annumWages: Float) {
-
-    }
-
     // The great states of Colorado, Illinois, Indiana, Kentucky, Massachusetts, Michigan,
     // North Carolina, Pennsylvania, and Utah  make this easy and have a simple flat-rate income tax
     private fun stateHasFlatRate(): Boolean {

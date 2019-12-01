@@ -152,8 +152,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
-            android:visibility="gone"
             android:text="@string/exemption"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spinner_state" />
 
@@ -162,9 +162,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
-            android:visibility="gone"
             android:focusedByDefault="false"
             android:gravity="end"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/label_alabama_exemption" />
 
@@ -175,8 +175,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
-            android:visibility="gone"
             android:text="@string/dependents"
+            android:visibility="gone"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spinner_alabama_exemption" />
 
@@ -189,11 +189,36 @@
             android:hint="@string/_0"
             android:importantForAutofill="no"
             android:inputType="number"
-            android:visibility="gone"
             android:selectAllOnFocus="true"
             android:text="@string/_0"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/label_alabama_dependents" />
+
+        <!-- Arizona -->
+
+        <!-- Arizona Constant Rate -->
+
+        <TextView
+            android:id="@+id/label_arizona_percent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:text="@string/constant_percentage"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/et_alabama_dependents" />
+
+        <Spinner
+            android:id="@+id/spinner_arizona_percentage"
+            android:layout_margin="@dimen/margin_small"
+            android:focusedByDefault="false"
+            android:gravity="end"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_arizona_percent"
+            android:layout_height="wrap_content" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

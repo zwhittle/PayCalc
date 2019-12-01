@@ -7,7 +7,8 @@ import com.example.paycalc.taxes.federal.AdditionalMedicare
 import com.example.paycalc.taxes.federal.FederalWithholding
 import com.example.paycalc.taxes.federal.Medicare
 import com.example.paycalc.taxes.federal.OASDI
-import com.example.paycalc.taxes.state.AlabamaStateWithholding
+import com.example.paycalc.taxes.state.AlabamaWithholding
+import com.example.paycalc.taxes.state.ArizonaWithholding
 import com.example.paycalc.taxes.state.StateWithholding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -47,6 +48,9 @@ class MainViewModel : ViewModel() {
 
     // Alabama Dependents
     var alabamaDependents: Int = 2
+
+    // Arizona Constant Rate
+    var arizonaConstantRate: String = Constants.ArizonaConstantRates.TWO_POINT_SEVEN
 
     /**
      * Calculation Values
@@ -215,8 +219,8 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcStateTax(): Float {
-        val tax = if (stateElectionState == Constants.States.ALABAMA) {
-            AlabamaStateWithholding(
+        val tax = when (stateElectionState) {
+            Constants.States.ALABAMA -> AlabamaWithholding(
                 frequency = taxFrequency,
                 regWages = regularWages,
                 supWages = supplementalWages,
@@ -225,9 +229,13 @@ class MainViewModel : ViewModel() {
                 fedAmount = _federalTax.value ?: 0f,
                 dependents = alabamaDependents
             ).result()
-        } else {
-
-            StateWithholding(
+            Constants.States.ARIZONA -> ArizonaWithholding(
+                percentage = arizonaConstantRate,
+                regWages = regularWages,
+                supWages = supplementalWages,
+                deductions = preTaxWages
+            ).result()
+            else -> StateWithholding(
                 state = stateElectionState,
                 frequency = taxFrequency,
                 regWages = regularWages,

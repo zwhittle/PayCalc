@@ -5,7 +5,7 @@ import com.example.paycalc.Constants
 import com.example.paycalc.Utils
 import com.example.paycalc.brackets.state.Alabama.*
 
-class AlabamaStateWithholding(
+class AlabamaWithholding(
     frequency: String,
     private val regWages: Float,
     private val supWages: Float,
