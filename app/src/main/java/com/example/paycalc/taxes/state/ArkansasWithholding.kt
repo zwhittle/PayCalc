@@ -2,9 +2,14 @@ package com.example.paycalc.taxes.state
 
 import android.util.Log
 import com.example.paycalc.Utils
-import com.example.paycalc.brackets.state.Arkansas.Withholding
+import com.example.paycalc.taxtables.state.Arkansas.Withholding
 import kotlin.math.round
 
+/**
+ * State Withholding for Arkansas
+ * Does not inherit Tax because it has a specific calculation
+ * Uses Dependents from the State Election
+ */
 class ArkansasWithholding(
     frequency: String,
     private val exemptions: Int,
@@ -12,13 +17,17 @@ class ArkansasWithholding(
     private val supWages: Float,
     private val deductions: Float) {
 
+    // Fields for use in calculations
     private var annualGross = 0f
     private var periodsPerYear = 0
 
+    // Arkansas has a flat standard deduction
     private var standardDeduction = 2200f
 
+    // Log tag
     private var logTag = this.javaClass.simpleName
 
+    // Calculate and store the annual gross wages and # of periods per year for later use
     init {
         Log.d(logTag, "frequency: $frequency")
         periodsPerYear = Utils.periodsPerYear(frequency)
@@ -26,6 +35,8 @@ class ArkansasWithholding(
         annualGross = annualGrossTaxableWages()
     }
 
+    // Calculate the current period taxable wages by starting with the passed raw wage values and
+    // reducing by pre-tax deductions
     private fun taxableWages(): Float {
         val taxableWages = regWages + supWages - deductions
 
@@ -34,6 +45,7 @@ class ArkansasWithholding(
         return taxableWages
     }
 
+    // Convert the current period taxable wages to an annual amount
     private fun annualGrossTaxableWages(): Float {
         val grossWages = taxableWages() * periodsPerYear
 
@@ -42,6 +54,7 @@ class ArkansasWithholding(
         return grossWages
     }
 
+    // Calculate the net taxable income
     private fun netTaxableIncome(): Float {
         var netTaxableIncome = annualGross - standardDeduction
 
@@ -66,6 +79,7 @@ class ArkansasWithholding(
         return netTaxableIncome
     }
 
+    // Calculate the annual gross tax using the appropriate tax table
     private fun annualGrossTax(): Float {
         val wages = netTaxableIncome()
         val rate: Float
@@ -107,6 +121,7 @@ class ArkansasWithholding(
         return tax
     }
 
+    // Calculate the annual personal credits amount (exemptions * $26)
     private fun annualPersonalCredits(): Float {
         val credits = exemptions * 26f
 
@@ -115,6 +130,7 @@ class ArkansasWithholding(
         return credits
     }
 
+    // Calculate the annual net tax (annual gross tax - annual personal credits)
     private fun annualNetTax(): Float {
         val netTax = annualGrossTax() - annualPersonalCredits()
 
@@ -123,6 +139,7 @@ class ArkansasWithholding(
         return netTax
     }
 
+    // Call this function to run all the calcs and return the final amount
     fun result(): Float {
         val finalTax = annualNetTax() / periodsPerYear
 

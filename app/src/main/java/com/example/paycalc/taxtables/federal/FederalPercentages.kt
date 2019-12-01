@@ -1,4 +1,4 @@
-package com.example.paycalc.brackets.federal
+package com.example.paycalc.taxtables.federal
 
 object FederalPercentages {
     const val PCT_ONE = 0.10f

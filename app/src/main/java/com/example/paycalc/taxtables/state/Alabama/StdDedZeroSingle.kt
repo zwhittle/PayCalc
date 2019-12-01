@@ -1,4 +1,4 @@
-package com.example.paycalc.brackets.state.Alabama
+package com.example.paycalc.taxtables.state.Alabama
 
 object StdDedZeroSingle {
     const val MAX_DEDUCTION = 2500f

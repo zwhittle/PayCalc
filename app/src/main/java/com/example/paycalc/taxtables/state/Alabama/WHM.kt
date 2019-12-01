@@ -1,4 +1,4 @@
-package com.example.paycalc.brackets.state.Alabama
+package com.example.paycalc.taxtables.state.Alabama
 
 object WHM {
     const val AMOUNT_ONE = 1000f

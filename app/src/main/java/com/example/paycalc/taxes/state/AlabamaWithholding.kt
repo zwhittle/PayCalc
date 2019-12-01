@@ -3,8 +3,14 @@ package com.example.paycalc.taxes.state
 import android.util.Log
 import com.example.paycalc.Constants
 import com.example.paycalc.Utils
-import com.example.paycalc.brackets.state.Alabama.*
+import com.example.paycalc.taxtables.state.Alabama.*
 
+/**
+ * State Withholding for Alabama
+ * Not inherited from Tax because Alabama has a specific calculation
+ * Uses Exemption and Dependents from the State Election
+ * Uses Federal Withholding for the current period
+ */
 class AlabamaWithholding(
     frequency: String,
     private val regWages: Float,
@@ -15,12 +21,15 @@ class AlabamaWithholding(
     private val dependents: Int
 ) {
 
+    // Create fileds for amount, gross, and periodsPerYear for use when needed
     private var amount = 0f
     private var gross = 0f
     private var periodsPerYear = 0
 
+    // Log tag
     private val logTag: String = this.javaClass.simpleName
 
+    // Calculate and store the # of pay periods in a year and the gross wages for later use
     init {
         Log.d(logTag, "frequency: $frequency")
         periodsPerYear = Utils.periodsPerYear(frequency)
@@ -28,12 +37,14 @@ class AlabamaWithholding(
         gross = grossWages()
     }
 
+    // Top-level function to calculate the final tax amount
     private fun calc() {
         amount = computeTax() / periodsPerYear
 
         Log.d(logTag, "amount: $amount")
     }
 
+    // Calculate the gross taxable wages by starting with gross wages and subtracting the reductions
     private fun grossTaxableWages(): Float {
         val totalReductions = standardDeduction() + federalAmount() + personalExemption() + dependentsReduction()
 
@@ -45,6 +56,7 @@ class AlabamaWithholding(
         return grossTaxableWages
     }
 
+    // Calculate the taxable wages for the current period
     private fun taxableWages(): Float {
         val taxableWages = regWages + supWages - deductions
 
@@ -53,6 +65,7 @@ class AlabamaWithholding(
         return taxableWages
     }
 
+    // Convert the current period taxable wages to an annual amount
     private fun grossWages(): Float {
         val grossWages = taxableWages() * periodsPerYear
 
@@ -61,7 +74,9 @@ class AlabamaWithholding(
         return grossWages
     }
 
+    // Calculate the appropriate standard deduction based on Exemption
     private fun standardDeduction(): Float {
+        // Use the appropriate child function
         val standardDeduction =  when (exemption) {
             Constants.AlabamaExemptions.ZERO -> stdDedZeroSingle()
             Constants.AlabamaExemptions.SINGLE -> stdDedZeroSingle()
@@ -150,6 +165,7 @@ class AlabamaWithholding(
         return stdDedH
     }
 
+    // Convert the current period Federal Withholding amount to an annual amount
     private fun federalAmount(): Float {
         val federalAmount = fedAmount * periodsPerYear
 
@@ -158,6 +174,7 @@ class AlabamaWithholding(
         return federalAmount
     }
 
+    // Calculate the personal exemption amount
     private fun personalExemption(): Float {
         val personalExemption = when (exemption) {
             Constants.AlabamaExemptions.ZERO -> 0f
@@ -173,6 +190,7 @@ class AlabamaWithholding(
         return personalExemption
     }
 
+    // Calculate the dependents reduction amount
     private fun dependentsReduction(): Float {
         val dependentsReduction = when {
             gross <= 20000f -> dependents * 1000f
@@ -185,7 +203,9 @@ class AlabamaWithholding(
         return dependentsReduction
     }
 
+    // Compute the annual tax amount
     private fun computeTax(): Float {
+        // Use the appropriate child function based on Exemption
         val tax = if (exemption == Constants.AlabamaExemptions.MARRIED_FILING_JOINTLY) {
             computeTaxM()
         } else {
@@ -260,6 +280,7 @@ class AlabamaWithholding(
         return tax
     }
 
+    // Call this function to run all the calculations and return the final amount
     fun result(): Float {
         calc()
         return amount

@@ -1,4 +1,4 @@
-package com.example.paycalc.brackets.federal
+package com.example.paycalc.taxtables.federal
 
 object AnnuallyMarried {
     const val OVER_ONE = 11800f

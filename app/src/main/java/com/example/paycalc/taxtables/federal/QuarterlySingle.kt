@@ -1,4 +1,4 @@
-package com.example.paycalc.brackets.federal
+package com.example.paycalc.taxtables.federal
 
 object QuarterlySingle {
     const val OVER_ONE = 950f

@@ -1,4 +1,4 @@
-package com.example.paycalc.brackets.state.Arkansas
+package com.example.paycalc.taxtables.state.Arkansas
 
 object Withholding {
     const val UPPER_ONE = 4299f

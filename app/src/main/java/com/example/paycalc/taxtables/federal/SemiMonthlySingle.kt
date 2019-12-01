@@ -1,4 +1,4 @@
-package com.example.paycalc.brackets.federal
+package com.example.paycalc.taxtables.federal
 
 object SemiMonthlySingle {
     const val OVER_ONE = 158f

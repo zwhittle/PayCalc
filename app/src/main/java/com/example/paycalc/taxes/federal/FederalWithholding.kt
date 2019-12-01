@@ -1,9 +1,13 @@
 package com.example.paycalc.taxes.federal
 
 import com.example.paycalc.Constants
-import com.example.paycalc.brackets.federal.*
+import com.example.paycalc.taxtables.federal.*
 import com.example.paycalc.taxes.Tax
 
+/**
+ * Federal Withholding Tax
+ * Progressive rate tax on all taxable wages
+ */
 class FederalWithholding(
     private val frequency: String = Constants.Frequencies.BIWEEKLY,
     private val maritalStatus: String,
@@ -14,18 +18,23 @@ class FederalWithholding(
     deductions: Float
 ) : Tax(regWages, supWages, deductions) {
 
+    // flag that this tax has a supplemental tax component when applicable
     override var hasSupplementalTax = true
     override var supplementalRate = 0.22f
 
-    private var allowanceAmount = 0f
+    // create an adjustedWages for use when needed
     private var adjustedWages = 0f
 
+    // Top-level function to calculate the amount of Regular Tax
     override fun calcRegularAmount(): Float {
 
+        // if there are not regular wages then there's no tax
         if (regularTaxableWages == 0f) {
             return 0f
         }
 
+        // Use the appropriate child function based on the selected frequency
+        // Each of these have child functions based on marital status
         val regAmount = when (frequency) {
             Constants.Frequencies.WEEKLY -> calcWeeklyRegular()
             Constants.Frequencies.BIWEEKLY -> calcBiweeklyRegular()
@@ -38,6 +47,7 @@ class FederalWithholding(
             else -> 0f
         }
 
+        // Add in any elected additional amount as a last step
         return regAmount + addlAmount
     }
 
@@ -46,7 +56,7 @@ class FederalWithholding(
 
         return when (maritalStatus) {
             Constants.FederalMaritalStatuses.SINGLE -> fedRegTaxWeeklySingle(adjustedWages)
-            Constants.FederalMaritalStatuses.MARRIED -> fedRegTaxBiweeklyMarried(adjustedWages)
+            Constants.FederalMaritalStatuses.MARRIED -> fedRegTaxWeeklyMarried(adjustedWages)
             Constants.FederalMaritalStatuses.MARRIED_SINGLE -> fedRegTaxWeeklySingle(adjustedWages)
             else -> 0f
         }
@@ -350,7 +360,8 @@ class FederalWithholding(
             else -> DailyMarried.GIVEN_SEVEN + ((wages - DailyMarried.OVER_SEVEN) * FederalPercentages.PCT_SEVEN)
         }
     }
-    
+
+    // Calculate the amount of Supplemental Tax
     override fun calcSupplementalAmount(): Float {
         return supplementalTaxableWages * supplementalRate
     }

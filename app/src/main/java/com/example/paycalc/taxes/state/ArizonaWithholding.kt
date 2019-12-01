@@ -3,6 +3,11 @@ package com.example.paycalc.taxes.state
 import com.example.paycalc.Constants
 import com.example.paycalc.taxes.Tax
 
+/**
+ * State Withholding Tax for Arizona
+ * Employees elect a flat rate percentage
+ */
+
 class ArizonaWithholding(private val percentage: String, regWages: Float, supWages: Float, deductions: Float) :
     Tax(regWages,
         supWages,
