@@ -29,6 +29,8 @@
     <string name="additional_amount">Additional Amount</string>
     <string name="net_pay">Net Pay</string>
     <string name="frequency">Frequency</string>
+    <string name="exemption">Exemption</string>
+    <string name="dependents">Dependents</string>
 
     <string-array name="frequencies">
         <item>Weekly</item>
@@ -102,6 +104,12 @@
         <item>Wyoming</item>
     </string-array>
 
-
+    <string-array name="alabama_exemptions">
+        <item>Zero (0)</item>
+        <item>Single (S)</item>
+        <item>Married Filing Separately (MS)</item>
+        <item>Married Filing Jointly (M)</item>
+        <item>Head of Family (H)</item>
+    </string-array>
 
 </resources>

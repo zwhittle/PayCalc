@@ -13,20 +13,20 @@
 
         <TextView
             android:id="@+id/label_frequency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="@string/frequency"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Spinner
             android:id="@+id/spinner_frequency"
-            android:gravity="end"
-            android:focusedByDefault="false"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/label_frequency"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:focusedByDefault="false"
+            android:gravity="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/label_frequency" />
 
         <!-- Federal -->
         <TextView
@@ -54,8 +54,8 @@
             android:id="@+id/spinner_fed_marital_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
             android:focusedByDefault="false"
+            android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/label_fed_marital_status" />
 
@@ -74,12 +74,12 @@
             android:id="@+id/et_fed_allowances"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:focusedByDefault="false"
             android:gravity="end"
             android:hint="@string/_0"
             android:importantForAutofill="no"
             android:inputType="number"
             android:selectAllOnFocus="true"
-            android:focusedByDefault="false"
             android:text="@string/_0"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/spinner_fed_marital_status" />
@@ -99,12 +99,12 @@
             android:id="@+id/et_fed_addl_amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:focusedByDefault="false"
             android:gravity="end"
             android:hint="@string/_0_00"
             android:importantForAutofill="no"
             android:inputType="numberDecimal"
             android:selectAllOnFocus="true"
-            android:focusedByDefault="false"
             android:text="@string/_0_00"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/et_fed_allowances" />
@@ -138,31 +138,62 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/margin_small"
-            android:gravity="end"
             android:focusedByDefault="false"
+            android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@id/label_state" />
 
-        <!-- State Marital Status -->
+        <!-- Alabama -->
+
+        <!-- Alabama Exemption -->
 
         <TextView
-            android:id="@+id/label_state_marital_status"
+            android:id="@+id/label_alabama_exemption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/marital_status"
+            android:layout_margin="@dimen/margin_small"
             android:visibility="gone"
+            android:text="@string/exemption"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/header_state" />
+            app:layout_constraintTop_toBottomOf="@id/spinner_state" />
 
         <Spinner
-            android:id="@+id/spinner_state_marital_status"
+            android:id="@+id/spinner_alabama_exemption"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:focusedByDefault="false"
+            android:layout_margin="@dimen/margin_small"
             android:visibility="gone"
+            android:focusedByDefault="false"
+            android:gravity="end"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/label_state_marital_status" />
+            app:layout_constraintTop_toBottomOf="@id/label_alabama_exemption" />
+
+        <!-- Alabama Dependents -->
+
+        <TextView
+            android:id="@+id/label_alabama_dependents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_small"
+            android:visibility="gone"
+            android:text="@string/dependents"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/spinner_alabama_exemption" />
+
+        <EditText
+            android:id="@+id/et_alabama_dependents"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:focusedByDefault="false"
+            android:gravity="end"
+            android:hint="@string/_0"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            android:visibility="gone"
+            android:selectAllOnFocus="true"
+            android:text="@string/_0"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/label_alabama_dependents" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

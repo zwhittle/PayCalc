@@ -1,6 +1,7 @@
 package com.example.paycalc
 
 
+import android.opengl.Visibility
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -19,7 +20,7 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
     private var selectedFrequency = ""
     private var selectedState = ""
     private var selectedFedStatus = ""
-    private var selectStateStatus = ""
+    private var selectedAlabamaExemption = ""
 
     private val viewModel: MainViewModel by lazy {
         ViewModelProviders.of(this.activity!!).get(MainViewModel::class.java)
@@ -47,29 +48,34 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
 
     override fun onResume() {
         // Reload the input data from the view model
-        selectedFrequency = viewModel.taxFrequency
-        selectedState = viewModel.stateElectionState
-        selectedFedStatus = viewModel.fedMaritalStatus
-
-        if (!viewModel.stateMaritalStatus.isNullOrEmpty()) {
-            selectStateStatus = viewModel.stateMaritalStatus.toString()
-        }
 
         binding.etFedAllowances.setText(viewModel.fedAllowances.toString())
         binding.etFedAddlAmount.setText(viewModel.fedAdditionalAmount.toString())
 
+        selectedFrequency = viewModel.taxFrequency
         val frequencies = resources.getStringArray(R.array.frequencies)
         val frequenciesPosition = frequencies.indexOf(selectedFrequency)
+        binding.spinnerFrequency.setSelection(frequenciesPosition)
 
+        selectedState = viewModel.stateElectionState
         val states = resources.getStringArray(R.array.states)
         val statesPosition = states.indexOf(selectedState)
+        binding.spinnerState.setSelection(statesPosition)
 
+        selectedFedStatus = viewModel.fedMaritalStatus
         val fedStatuses = resources.getStringArray(R.array.fed_marital_statuses)
         val fedStatusesPosition = fedStatuses.indexOf(selectedFedStatus)
-
-        binding.spinnerFrequency.setSelection(frequenciesPosition)
         binding.spinnerFedMaritalStatus.setSelection(fedStatusesPosition)
-        binding.spinnerState.setSelection(statesPosition)
+
+        // Alabama
+        if (!viewModel.alabamaExemption.isEmpty()) {
+            selectedAlabamaExemption = viewModel.alabamaExemption.toString()
+        }
+
+        val alabamaExemptions = resources.getStringArray(R.array.alabama_exemptions)
+        val alabamaExemptionsPosition = alabamaExemptions.indexOf(selectedAlabamaExemption)
+        binding.etAlabamaDependents.setText(viewModel.alabamaDependents.toString())
+        binding.spinnerAlabamaExemption.setSelection(alabamaExemptionsPosition)
 
         super.onResume()
     }
@@ -101,6 +107,11 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         // Update State Election data
         viewModel.stateElectionState = selectedState
 
+        // Alabama
+        val alabamaDependents = binding.etAlabamaDependents.text.toString().toInt()
+        viewModel.alabamaDependents = alabamaDependents
+        viewModel.alabamaExemption = selectedAlabamaExemption
+
         return true
     }
 
@@ -108,6 +119,7 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         initializeFrequencySpinner()
         initializeStateSpinner()
         initializeFedMaritalSpinner()
+        initializeAlabamaExemptionSpinner()
     }
 
     private fun initializeFrequencySpinner() {
@@ -139,14 +151,14 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         stateSpinner.onItemSelectedListener = this
     }
 
-    private fun initializeStateMaritalSpinner() {
-        val stateMaritalSpinner = binding.spinnerStateMaritalStatus
+    private fun initializeAlabamaExemptionSpinner() {
+        val alabamaExemptionSpinner = binding.spinnerAlabamaExemption
 
-        ArrayAdapter.createFromResource(binding.root.context, R.array.fed_marital_statuses, android.R.layout.simple_spinner_item).also { adapter ->
-            stateMaritalSpinner.adapter = adapter
+        ArrayAdapter.createFromResource(binding.root.context, R.array.alabama_exemptions, android.R.layout.simple_spinner_item).also { adapter ->
+            alabamaExemptionSpinner.adapter = adapter
         }
 
-        stateMaritalSpinner.onItemSelectedListener = this
+        alabamaExemptionSpinner.onItemSelectedListener = this
     }
 
     override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
@@ -154,7 +166,7 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
             R.id.spinner_frequency -> onFrequencySelected(position)
             R.id.spinner_state -> onStateSelected(position)
             R.id.spinner_fed_marital_status -> onFedMaritalSelected(position)
-            R.id.spinner_state_marital_status -> onStateMaritalSelected(position)
+            R.id.spinner_alabama_exemption -> onAlabamaExemptionSelected(position)
         }
     }
 
@@ -169,6 +181,20 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         val states = resources.getStringArray(R.array.states)
         val state = states[position]
 
+        if (state == Constants.States.ALABAMA) {
+            binding.labelAlabamaExemption.visibility = View.VISIBLE
+            binding.spinnerAlabamaExemption.visibility = View.VISIBLE
+
+            binding.labelAlabamaDependents.visibility = View.VISIBLE
+            binding.etAlabamaDependents.visibility = View.VISIBLE
+        } else {
+            binding.labelAlabamaExemption.visibility = View.GONE
+            binding.spinnerAlabamaExemption.visibility = View.GONE
+
+            binding.labelAlabamaDependents.visibility = View.GONE
+            binding.etAlabamaDependents.visibility = View.GONE
+        }
+
         selectedState = state
     }
 
@@ -179,11 +205,11 @@ class ElectionFragment : Fragment(), AdapterView.OnItemSelectedListener {
         selectedFedStatus = status
     }
 
-    private fun onStateMaritalSelected(position: Int) {
-        val statuses = resources.getStringArray(R.array.fed_marital_statuses)
-        val status = statuses[position]
+    private fun onAlabamaExemptionSelected(position: Int) {
+        val exemptions = resources.getStringArray(R.array.alabama_exemptions)
+        val exemption = exemptions[position]
 
-        selectStateStatus = status
+        selectedAlabamaExemption = exemption
     }
 
     override fun onNothingSelected(parent: AdapterView<*>?) {
