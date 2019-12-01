@@ -3,7 +3,12 @@ package com.example.paycalc
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.paycalc.taxes.*
+import com.example.paycalc.taxes.federal.AdditionalMedicare
+import com.example.paycalc.taxes.federal.FederalWithholding
+import com.example.paycalc.taxes.federal.Medicare
+import com.example.paycalc.taxes.federal.OASDI
+import com.example.paycalc.taxes.state.AlabamaStateWithholding
+import com.example.paycalc.taxes.state.StateWithholding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -37,15 +42,21 @@ class MainViewModel : ViewModel() {
     // State Additional Amount
     var stateAdditionalAmount: Float = 0f
 
+    // Alabama Exemptions
+    var alabamaExemption: String = Constants.AlabamaExemptions.MARRIED_FILING_JOINTLY
+
+    // Alabama Dependents
+    var alabamaDependents: Int = 2
+
     /**
      * Calculation Values
      */
 
     // Regular Wages
-    var regularWages: Float
+    var regularWages: Float = 0f
 
     // Supplemental Wages
-    var supplementalWages: Float
+    var supplementalWages: Float = 0f
 
     // Total Wages
     private val _grossWages = MutableLiveData<Float>()
@@ -53,10 +64,10 @@ class MainViewModel : ViewModel() {
         get() = _grossWages
 
     // Pre-FICA Wages
-    var preFICAWages: Float
+    var preFICAWages: Float = 0f
 
     // Pre-Tax Wages
-    var preTaxWages: Float
+    var preTaxWages: Float = 0f
 
     // OASDI Wages
     private val _oasdiWages = MutableLiveData<Float>()
@@ -129,108 +140,17 @@ class MainViewModel : ViewModel() {
     // the Coroutine runs using the Main (UI) dispatcher
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
 
-    init {
-        // initialize calculation values
-        regularWages = 0f
-        supplementalWages = 0f
-        preFICAWages = 0f
-        preTaxWages = 0f
-    }
-
-    fun updateRegularWages(wages: Float) {
-        regularWages = wages
-    }
-
-    fun updateSupplementalWages(wages: Float) {
-        supplementalWages = wages
-    }
-
-    fun updatePreFICAWages(wages: Float) {
-        preFICAWages = wages
-    }
-
-    fun updatePreTaxWages(wages: Float) {
-        preTaxWages = wages
-    }
-
     fun calc() {
-        calcTotalWages()
+        calcGrossWages()
         calcTaxes()
         calcNetPay()
     }
 
-    private fun calcTotalWages() {
+    private fun calcGrossWages() {
         val regWages = regularWages
         val suppWages = supplementalWages
 
         _grossWages.value = regWages + suppWages
-    }
-
-    private fun calcOASDIWages() {
-        val twages = _grossWages.value
-        val pfWages = preFICAWages
-
-        var ssaWages = twages?.minus(pfWages)
-        if (ssaWages != null) {
-            if (ssaWages > 132900f) {
-                ssaWages = 132900f
-            }
-        }
-
-        _oasdiWages.value = ssaWages
-    }
-
-    private fun calcMedicareWages() {
-        val twages = _grossWages.value
-        val pfWages = preFICAWages
-
-        val medWages = twages?.minus(pfWages)
-
-        _medicareWages.value = medWages
-    }
-
-    private fun calcAdditionalMedicareWages() {
-        val twages = _grossWages.value
-        val pfWages = preFICAWages
-        val threshold = 200000f
-
-        val ficaWages = twages?.minus(pfWages)
-        var addMedWages = ficaWages?.minus(threshold)
-
-        if (addMedWages != null) {
-            if (addMedWages < 0f) {
-                addMedWages = 0f
-            }
-        }
-
-        _additionalMedicareWages.value = addMedWages
-    }
-
-    private fun calcFedRegWages() {
-        val twages = _grossWages.value
-        val regWages = regularWages
-        val ptWages = preTaxWages
-
-        val pct = regWages.div(twages!!)
-        val adjPreTaxWages = ptWages.times(pct)
-
-        _federalRegularWages.value = regWages.minus(adjPreTaxWages)
-    }
-
-    private fun calcFedSuppWages() {
-        val twages = _grossWages.value
-        val suppWages = supplementalWages
-        val ptWages = preTaxWages
-
-        val pct = suppWages.div(twages!!)
-        val adjPreTaxWages = ptWages.times(pct)
-
-        _federalSupplementalWages.value = suppWages.minus(adjPreTaxWages)
-    }
-
-    private fun calcFederalWages() {
-        calcFedRegWages()
-        calcFedSuppWages()
     }
 
     private fun calcStateWages() {
@@ -262,76 +182,67 @@ class MainViewModel : ViewModel() {
     }
 
     private fun calcOASDI(): Float {
-        val tax = OASDI(regularWages, supplementalWages, preFICAWages).result()
+        val tax = OASDI(
+            regularWages,
+            supplementalWages,
+            preFICAWages
+        ).result()
 
         _oasdiTax.value = tax
         return tax
     }
 
     private fun calcMedicare(): Float {
-        val tax = Medicare(regularWages, supplementalWages, preFICAWages).result()
+        val tax = Medicare(
+            regularWages,
+            supplementalWages,
+            preFICAWages
+        ).result()
 
         _medicareTax.value = tax
         return tax
     }
 
     private fun calcAdditionalMedicare(): Float {
-        val tax = AdditionalMedicare(regularWages, supplementalWages, preFICAWages).result()
+        val tax = AdditionalMedicare(
+            regularWages,
+            supplementalWages,
+            preFICAWages
+        ).result()
 
         _additionalMedicareTax.value = tax
         return tax
     }
 
     private fun calcStateTax(): Float {
-        calcStateWages()
-        val wages = _stateWages.value ?: 0f
+        val tax = if (stateElectionState == Constants.States.ALABAMA) {
+            AlabamaStateWithholding(
+                frequency = taxFrequency,
+                regWages = regularWages,
+                supWages = supplementalWages,
+                deductions = preTaxWages,
+                exemption = alabamaExemption,
+                fedAmount = _federalTax.value ?: 0f,
+                dependents = alabamaDependents
+            ).result()
+        } else {
 
-        val gross = _grossWages.value ?: 0f
-
-//        val tax = calcStateTaxFlat(wages, stateElectionState)
-        val tax = StateWithholding(
-            stateElectionState,
-            regularWages,
-            supplementalWages,
-            preTaxWages
-        ).result()
+            StateWithholding(
+                state = stateElectionState,
+                frequency = taxFrequency,
+                regWages = regularWages,
+                supWages = supplementalWages,
+                deductions = preTaxWages
+            ).result()
+        }
 
         _stateTax.value = tax
         return tax
     }
 
-    private fun calcStateTaxFlat(wages: Float, state: String): Float {
-
-        val rate = when (state) {
-            Constants.States.COLORADO -> 0.0463f
-            Constants.States.ILLINOIS -> 0.0495f
-            Constants.States.INDIANA -> 0.0323f
-            Constants.States.KENTUCKY -> 0.05f
-            Constants.States.MASSACHUSETTS -> 0.0505f
-            Constants.States.MICHIGAN -> 0.0425f
-            Constants.States.NORTH_CAROLINA -> 0.0525f
-            Constants.States.PENNSYLVANIA -> 0.0307f
-            Constants.States.UTAH -> 0.0495f
-            else -> 0f
-        }
-
-        return wages * rate
-    }
-
     private fun calcFederalTax(): Float {
-        calcFederalWages()
-
-        val regWages = _federalRegularWages.value ?: 0f
-        val suppWages = _federalSupplementalWages.value ?: 0f
-
-        val suppTax = suppWages.times(0.22f)
-
-        val regTax = calcFederalRegularTax(regWages)
-
-        val additionalAmount = fedAdditionalAmount
-
-//        val tax = regTax + suppTax + additionalAmount
         val tax = FederalWithholding(
+            frequency = taxFrequency,
             maritalStatus = fedMaritalStatus,
             allowances = fedAllowances,
             addlAmount = fedAdditionalAmount,
@@ -342,49 +253,6 @@ class MainViewModel : ViewModel() {
 
         _federalTax.value = tax
         return tax
-    }
-
-    private fun calcFederalRegularTax(wages: Float): Float {
-
-        return when (fedMaritalStatus) {
-            Constants.FederalMaritalStatuses.SINGLE -> fedRegTaxBWSingle(wages)
-            Constants.FederalMaritalStatuses.MARRIED -> fedRegTaxBWMarried(wages)
-            Constants.FederalMaritalStatuses.MARRIED_SINGLE -> fedRegTaxBWSingle(wages)
-            else -> 0f
-        }
-    }
-
-    private fun fedRegTaxBWSingle(wages: Float): Float {
-        val allowanceReduction = fedAllowances * 161.50f
-        val adjWages = wages - allowanceReduction
-
-
-        return when {
-            adjWages <= 146f -> 0f
-            adjWages <= 519f -> (adjWages - 146f) * 0.1f
-            adjWages <= 1664f -> 37.30f + ((adjWages - 519f) * 0.12f)
-            adjWages <= 3385f -> 174.70f + ((adjWages - 1664f) * 0.22f)
-            adjWages <= 6328f -> 553.32f + ((adjWages - 3385f) * 0.24f)
-            adjWages <= 7996f -> 1259.64f + ((adjWages - 6328f) * 0.32f)
-            adjWages <= 19773f -> 1793.40f + ((adjWages - 7996f) * 0.35f)
-            else -> 5915.35f + ((adjWages - 19773f) * 0.37f)
-        }
-    }
-
-    private fun fedRegTaxBWMarried(wages: Float): Float {
-        val allowanceReduction = fedAllowances * 161.50f
-        val adjWages = wages - allowanceReduction
-
-        return when {
-            adjWages <= 454f -> 0f
-            adjWages <= 1200f -> (adjWages - 454f) * 0.1f
-            adjWages <= 3490f -> 74.60f + ((adjWages - 1200f) * 0.12f)
-            adjWages <= 6931f -> 349.40f + ((adjWages - 3490f) * 0.22f)
-            adjWages <= 12817f -> 1106.42f + ((adjWages - 6931f) * 0.24f)
-            adjWages <= 16154f -> 2519.06f + ((adjWages - 12817f) * 0.32f)
-            adjWages <= 24006f -> 3586.90f + ((adjWages - 16154f) * 0.35f)
-            else -> 6335.10f + ((adjWages - 24006f) * 0.37f)
-        }
     }
 
     private fun calcNetPay(): Float {

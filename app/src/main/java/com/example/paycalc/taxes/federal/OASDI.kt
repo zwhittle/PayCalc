@@ -1,4 +1,6 @@
-package com.example.paycalc.taxes
+package com.example.paycalc.taxes.federal
+
+import com.example.paycalc.taxes.Tax
 
 class OASDI(regWages: Float, supWages: Float, deductions: Float): Tax(regWages, supWages, deductions){
 

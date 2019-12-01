@@ -1,7 +1,8 @@
-package com.example.paycalc.taxes
+package com.example.paycalc.taxes.federal
 
 import com.example.paycalc.Constants
 import com.example.paycalc.brackets.federal.*
+import com.example.paycalc.taxes.Tax
 
 class FederalWithholding(
     private val frequency: String = Constants.Frequencies.BIWEEKLY,

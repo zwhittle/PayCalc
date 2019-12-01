@@ -61,6 +61,8 @@ object Constants {
         const val MARRIED_SINGLE = "Married, but withhold at higher Single rate"
     }
 
+
+
     object Frequencies {
         const val DAILY = "Daily"
         const val WEEKLY = "Weekly"
@@ -81,5 +83,19 @@ object Constants {
         const val QUARTERLY = 10500f
         const val SEMIANNUALLY = 2100f
         const val ANNUAL = 42000f
+    }
+
+    /**
+     * State Constants
+     */
+
+    // Alabama
+
+    object AlabamaExemptions {
+        const val ZERO = "0"
+        const val SINGLE = "Single (S)"
+        const val MARRIED_FILING_SEPARATELY = "Married Filing Separately (MS)"
+        const val MARRIED_FILING_JOINTLY = "Married Filing Jointly (MJ)"
+        const val HEAD_OF_FAMILY = "Head of Family (H)"
     }
 }
