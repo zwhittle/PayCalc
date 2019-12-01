@@ -1,5 +1,6 @@
 package com.example.paycalc.taxes.state
 
+import android.util.Log
 import com.example.paycalc.Constants
 import com.example.paycalc.Utils
 import com.example.paycalc.brackets.state.Alabama.*
@@ -18,30 +19,50 @@ class AlabamaStateWithholding(
     private var gross = 0f
     private var periodsPerYear = 0
 
+    private val logTag: String = this.javaClass.simpleName
+
     init {
-        gross = grossWages()
+        Log.d(logTag, "frequency: $frequency")
         periodsPerYear = Utils.periodsPerYear(frequency)
+
+        gross = grossWages()
     }
 
     private fun calc() {
         amount = computeTax() / periodsPerYear
+
+        Log.d(logTag, "amount: $amount")
     }
 
     private fun grossTaxableWages(): Float {
-        val totalReductions = standardDeduction() + fedAmount + personalExemption() + dependentsReduction()
-        return grossWages() - totalReductions
+        val totalReductions = standardDeduction() + federalAmount() + personalExemption() + dependentsReduction()
+
+        Log.d(logTag, "totalReductions: $totalReductions")
+
+        val grossTaxableWages = gross - totalReductions
+
+        Log.d(logTag, "grossTaxableWages: $grossTaxableWages")
+        return grossTaxableWages
     }
 
     private fun taxableWages(): Float {
-        return regWages + supWages - deductions
+        val taxableWages = regWages + supWages - deductions
+
+        Log.d(logTag, "taxableWages: $taxableWages")
+
+        return taxableWages
     }
 
     private fun grossWages(): Float {
-        return taxableWages() * periodsPerYear
+        val grossWages = taxableWages() * periodsPerYear
+
+        Log.d(logTag, "grossWages: $grossWages")
+
+        return grossWages
     }
 
     private fun standardDeduction(): Float {
-        return when (exemption) {
+        val standardDeduction =  when (exemption) {
             Constants.AlabamaExemptions.ZERO -> stdDedZeroSingle()
             Constants.AlabamaExemptions.SINGLE -> stdDedZeroSingle()
             Constants.AlabamaExemptions.MARRIED_FILING_SEPARATELY -> {
@@ -55,10 +76,14 @@ class AlabamaStateWithholding(
             }
             else -> 0f
         }
+
+        Log.d(logTag, "standardDeduction: $standardDeduction")
+
+        return standardDeduction
     }
 
     private fun stdDedZeroSingle(): Float {
-        return when {
+        val stdDedZeroSingle =  when {
             gross <= StdDedZeroSingle.UPPER_ONE -> StdDedZeroSingle.MAX_DEDUCTION
             gross < StdDedZeroSingle.UPPER_TWO -> {
                 val excess = gross - StdDedZeroSingle.UPPER_TWO
@@ -68,10 +93,14 @@ class AlabamaStateWithholding(
             }
             else -> StdDedZeroSingle.MIN_DEDUCTION
         }
+
+        Log.d(logTag, "stdDedZeroSingle: $stdDedZeroSingle")
+
+        return stdDedZeroSingle
     }
 
     private fun stdDedMS(): Float {
-        return when {
+        val stdDedMS = when {
             gross <= StdDedMS.UPPER_ONE -> StdDedMS.MAX_DEDUCTION
             gross < StdDedMS.UPPER_TWO -> {
                 val excess = gross - StdDedMS.UPPER_TWO
@@ -81,10 +110,14 @@ class AlabamaStateWithholding(
             }
             else -> StdDedMS.MIN_DEDUCTION
         }
+
+        Log.d(logTag, "stdDedMS: $stdDedMS")
+
+        return stdDedMS
     }
 
     private fun stdDedM(): Float {
-        return when {
+        val stdDedM = when {
             gross <= StdDedM.UPPER_ONE -> StdDedM.MAX_DEDUCTION
             gross < StdDedM.UPPER_TWO -> {
                 val excess = gross - StdDedM.UPPER_TWO
@@ -94,10 +127,14 @@ class AlabamaStateWithholding(
             }
             else -> StdDedM.MIN_DEDUCTION
         }
+
+        Log.d(logTag, "stdDedM: $stdDedM")
+
+        return stdDedM
     }
 
     private fun stdDedH(): Float {
-        return when {
+        val stdDedH = when {
             gross <= StdDedH.UPPER_ONE -> StdDedH.MAX_DEDUCTION
             gross < StdDedH.UPPER_TWO -> {
                 val excess = gross - StdDedH.UPPER_TWO
@@ -107,10 +144,22 @@ class AlabamaStateWithholding(
             }
             else -> StdDedH.MIN_DEDUCTION
         }
+
+        Log.d(logTag, "stdDedH: $stdDedH")
+
+        return stdDedH
+    }
+
+    private fun federalAmount(): Float {
+        val federalAmount = fedAmount * periodsPerYear
+
+        Log.d(logTag, "federalAmount: $federalAmount")
+
+        return federalAmount
     }
 
     private fun personalExemption(): Float {
-        return when (exemption) {
+        val personalExemption = when (exemption) {
             Constants.AlabamaExemptions.ZERO -> 0f
             Constants.AlabamaExemptions.SINGLE -> 1500f
             Constants.AlabamaExemptions.MARRIED_FILING_SEPARATELY -> 1500f
@@ -118,73 +167,95 @@ class AlabamaStateWithholding(
             Constants.AlabamaExemptions.HEAD_OF_FAMILY -> 3000f
             else -> 0f
         }
+
+        Log.d(logTag, "personalExemption: $personalExemption")
+
+        return personalExemption
     }
 
     private fun dependentsReduction(): Float {
-        return when {
+        val dependentsReduction = when {
             gross <= 20000f -> dependents * 1000f
             gross <= 100000f -> dependents * 500f
             else -> dependents * 300f
         }
+
+        Log.d(logTag, "dependentsReduction: $dependentsReduction")
+
+        return dependentsReduction
     }
 
     private fun computeTax(): Float {
-        val tax = 0f
-        val remainingWages = grossWages()
-
-        return if (exemption == Constants.AlabamaExemptions.MARRIED_FILING_JOINTLY) {
-            computeTaxM(remainingWages, tax)
+        val tax = if (exemption == Constants.AlabamaExemptions.MARRIED_FILING_JOINTLY) {
+            computeTaxM()
         } else {
-            computeTaxZSOMS(remainingWages, tax)
-        }
-    }
-
-    private fun computeTaxZSOMS(remainingWages: Float, tax: Float): Float {
-        var remainingWages = remainingWages
-        var tax = tax
-
-        if (remainingWages > WHZeroSOMS.AMOUNT_ONE) {
-            tax += WHZeroSOMS.AMOUNT_ONE * WHZeroSOMS.PCT_ONE
-            remainingWages -= WHZeroSOMS.AMOUNT_ONE
+            computeTaxZSOMS()
         }
 
-        if (remainingWages > WHZeroSOMS.AMOUNT_TWO) {
-            tax += WHZeroSOMS.AMOUNT_TWO * WHZeroSOMS.PCT_TWO
-            remainingWages -= WHZeroSOMS.AMOUNT_TWO
-        } else {
-            tax += (remainingWages - WHZeroSOMS.AMOUNT_TWO) * WHZeroSOMS.PCT_TWO
-        }
-
-        if (remainingWages > WHZeroSOMS.AMOUNT_THREE) {
-            tax += (remainingWages - WHZeroSOMS.AMOUNT_THREE) * WHZeroSOMS.PCT_THREE
-        } else {
-            tax += (remainingWages - WHZeroSOMS.AMOUNT_TWO) * WHZeroSOMS.PCT_THREE
-        }
+        Log.d(logTag, "tax: $tax")
 
         return tax
     }
 
-    private fun computeTaxM(remainingWages: Float, tax: Float): Float {
-        var remainingWages = remainingWages
-        var tax = tax
+    private fun computeTaxZSOMS(): Float {
+        var remainingWages = grossTaxableWages()
+        var tax1 = 0f
+        var tax2 = 0f
+        var tax3 = 0f
+
+        if (remainingWages > WHZSOMS.AMOUNT_ONE) {
+            tax1 += WHZSOMS.AMOUNT_ONE * WHZSOMS.PCT_ONE
+            remainingWages -= WHZSOMS.AMOUNT_ONE
+            Log.d(logTag, "tax1: $tax1")
+        }
+
+        if (remainingWages > WHZSOMS.AMOUNT_TWO) {
+            tax2 += WHZSOMS.AMOUNT_TWO * WHZSOMS.PCT_TWO
+            remainingWages -= WHZSOMS.AMOUNT_TWO
+            Log.d(logTag, "tax2: $tax2")
+        } else {
+            tax2 += (remainingWages - WHZSOMS.AMOUNT_TWO) * WHZSOMS.PCT_TWO
+            remainingWages -= remainingWages
+            Log.d(logTag, "tax2: $tax2")
+        }
+
+        tax3 += remainingWages * WHZSOMS.PCT_THREE
+        Log.d(logTag, "tax3: $tax3")
+
+        val tax = tax1 + tax2 + tax3
+        Log.d(logTag, "computeTaxZSOMS: $tax")
+
+        return tax
+    }
+
+    private fun computeTaxM(): Float {
+        var remainingWages = grossTaxableWages()
+        var tax1 = 0f
+        var tax2 = 0f
 
         if (remainingWages > WHM.AMOUNT_ONE) {
-            tax += WHM.AMOUNT_ONE * WHM.PCT_ONE
+            tax1 += WHM.AMOUNT_ONE * WHM.PCT_ONE
             remainingWages -= WHM.AMOUNT_ONE
+
+            Log.d(logTag, "tax1: $tax1")
         }
 
         if (remainingWages > WHM.AMOUNT_TWO) {
-            tax += WHM.AMOUNT_TWO * WHM.PCT_TWO
+            tax2 += WHM.AMOUNT_TWO * WHM.PCT_TWO
             remainingWages -= WHM.AMOUNT_TWO
+            Log.d(logTag, "tax2: $tax2")
         } else {
-            tax += (remainingWages - WHM.AMOUNT_TWO) * WHM.PCT_TWO
+            tax2 += (remainingWages - WHM.AMOUNT_TWO) * WHM.PCT_TWO
+            Log.d(logTag, "tax2: $tax2")
+            remainingWages -= remainingWages
         }
 
-        if (remainingWages > WHM.AMOUNT_THREE) {
-            tax += (remainingWages - WHM.AMOUNT_THREE) * WHM.PCT_THREE
-        } else {
-            tax += (remainingWages - WHM.AMOUNT_TWO) * WHM.PCT_THREE
-        }
+        val tax3 = remainingWages * WHM.PCT_THREE
+        Log.d(logTag, "tax3: $tax3")
+
+        val tax = tax1 + tax2 + tax3
+
+        Log.d(logTag, "computeTaxM: $tax")
 
         return tax
     }

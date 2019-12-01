@@ -1,6 +1,6 @@
 package com.example.paycalc.brackets.state.Alabama
 
-object WHZeroSOMS {
+object WHZSOMS {
     const val AMOUNT_ONE = 500f
     const val PCT_ONE = 0.02f
 

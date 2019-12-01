@@ -37,7 +37,7 @@ abstract class Tax(private val regWages: Float, private val supWages: Float, pri
     open var hasAmountLimit = false
     open var amountLimit = 0f
 
-    private val LOG_TAG: String = this.javaClass.simpleName
+    private val logTag: String = this.javaClass.simpleName
 
     private fun calcWages() {
         grossWages = regWages + supWages
@@ -57,11 +57,11 @@ abstract class Tax(private val regWages: Float, private val supWages: Float, pri
         supplementalTaxableWages = taxableWages * (supWages / grossWages)
 
 
-        Log.d(LOG_TAG, "gross: $grossWages")
-        Log.d(LOG_TAG, "subject: $subjectWages")
-        Log.d(LOG_TAG, "taxable: $taxableWages")
-        Log.d(LOG_TAG, "regTaxable: $regularTaxableWages")
-        Log.d(LOG_TAG, "supTaxable: $supplementalTaxableWages")
+        Log.d(logTag, "gross: $grossWages")
+        Log.d(logTag, "subject: $subjectWages")
+        Log.d(logTag, "taxable: $taxableWages")
+        Log.d(logTag, "regTaxable: $regularTaxableWages")
+        Log.d(logTag, "supTaxable: $supplementalTaxableWages")
     }
 
     private fun calcAmount() {
